@@ -1,0 +1,214 @@
+/* 전체 페이지 배경 */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f5f5f5; /* 아주 연한 회색 배경 */
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden; /* 스크롤 방지 */
+}
+
+/* 중앙 카드 (화면 꽉 차게) */
+.login-card {
+    display: flex;
+    width: 100vw;   /* 화면 너비의 90% */
+    height: 100vh;  /* 화면 높이의 85% */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    background-color: white;
+}
+
+/* --- 왼쪽 패널 (흰색) --- */
+.left-panel {
+    flex: 1; /* 왼쪽:오른쪽 = 1:1 비율 */
+    background-color: white;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* 자식 요소 절대 위치 기준 */
+}
+
+.brand-title {
+    color: #2E7D32; /* 짙은 녹색 */
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+}
+
+.header-line {
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    
+}
+
+/* 입력 폼 컨테이너 */
+.login-form {
+   flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%; /* 이 숫자를 100%에 가깝게 하면 좌우가 더 넓어집니다 */
+    height: 20%;
+    margin: 0 auto; /* 중앙 정렬 */
+}
+
+.input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 아이디/비번 사이 간격 */
+    margin-bottom: 800px;
+}
+
+/* 회색 입력 박스 스타일 */
+.styled-input {
+    width: 100%;
+    height: 60px; /* ★ 이 숫자를 줄이거나 늘리면 박스 높이가 변합니다 */
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 0 20px;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+.styled-input:focus {
+    outline: 2px solid #2E7D32;
+}
+
+.find-text {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* 왼쪽 로그인 버튼 (하단 고정) */
+.login-action-btn {
+    position: absolute;
+    bottom: 80px; /* 바닥에서 띄운 높이 (오른쪽 버튼과 동일하게 맞춤) */
+    left: 50%;
+    transform: translateX(-50%); /* 정확한 가로 중앙 정렬 */
+    
+    width: 200px; 
+    height: 50px;
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.login-action-btn:hover {
+    background-color: #c0c0c0;
+}
+
+/* --- 오른쪽 패널 (회색) --- */
+.right-panel {
+    flex: 1.2; /* 오른쪽을 조금 더 넓게 */
+    background-color: #d9d9d9;
+    position: relative; /* 자식 요소 절대 위치 기준 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 홈 아이콘 */
+.home-icon-container {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+.home-icon-container:hover {
+    opacity: 1;
+}
+
+/* 오른쪽 회원가입 버튼 (하단 고정) */
+.signup-btn-wrapper {
+    position: absolute;
+    bottom: 80px; /* 왼쪽 버튼과 Y좌표(높이) 일치시킴 */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.signup-btn {
+    width: 250px;
+    height: 60px;
+    background-color: transparent;
+    border: 2px solid #555;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.signup-btn:hover {
+    background-color: rgba(255,255,255,0.3);
+    border-color: #333;
+}
+
+/* ... 기존 스타일 유지 ... */
+
+/* 오른쪽 패널 선택 화면 컨테이너 */
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.selection-title {
+    font-size: 20px;
+    color: #444;
+    margin-bottom: 40px;
+    font-weight: normal;
+}
+
+.selection-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+/* 유저/기업 선택 버튼 (흰색 박스) */
+.type-select-btn {
+    width: 200px;
+    height: 60px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.type-select-btn:hover {
+    border-color: #999;
+    transform: translateY(-2px);
+}
+
+/* 버튼 사이 얇은 구분선 (옵션) */
+.divider-line {
+    width: 80%;
+    height: 1px;
+    background-color: #ddd;
+    margin: 10px 0;
+}

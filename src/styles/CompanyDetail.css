@@ -1,0 +1,115 @@
+.cd-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 네비게이션 바 */
+.navbar {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    background-color: white;
+    box-sizing: border-box;
+}
+.nav-logo { color: #2E7D32; font-size: 26px; font-weight: bold; cursor: pointer; text-shadow: -1px -1px 0 #4285F4, 1px -1px 0 #4285F4, -1px 1px 0 #4285F4, 1px 1px 0 #4285F4; }
+.nav-links { display: flex; gap: 6vw; font-size: 18px; font-weight: bold; color: #333; }
+.nav-links span { cursor: pointer; }
+.auth-btn-area { display: flex; gap: 10px; }
+.nav-btn { padding: 8px 20px; border-radius: 4px; border: 1px solid #ddd; background-color: white; color: #4285F4; font-weight: bold; cursor: pointer; }
+.nav-divider { width: 100%; height: 1px; background-color: #eee; }
+
+/* 컨텐츠 영역 */
+.cd-content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cd-page-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.cd-title-underline {
+    width: 200px;
+    height: 2px;
+    background-color: #ccc;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+/* 검색창 */
+.cd-search-wrapper {
+    width: 60%;
+    margin-bottom: 60px;
+}
+.cd-search-input {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    padding: 0 30px;
+    font-size: 18px;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* 그리드/카드 */
+.cd-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.cd-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.cd-panel {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #d9d9d9;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-icon-placeholder {
+    font-size: 40px;
+    color: #999;
+}
+
+.cd-info h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+.cd-info p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* 하단 문구 */
+.cd-footer-text {
+    font-size: 14px;
+    color: #999;
+    margin-top: 20px;
+}

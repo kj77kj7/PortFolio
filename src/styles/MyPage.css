@@ -1,0 +1,192 @@
+/* ... 기존 mypage-container, header 등 스타일 유지 ... */
+
+.mypage-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+.mp-header { padding: 20px 40px; border-bottom: 1px solid #eee; }
+.mp-back-link { margin: 20px 40px; color: #666; cursor: pointer; }
+
+.mp-content {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 100px;
+}
+.mp-profile-img-box {
+    width: 300px;
+    height: 200px;
+    background-color: #d9d9d9;
+    margin-bottom: 20px;
+}
+.mp-profile-info { text-align: center; margin-bottom: 30px; }
+.mp-profile-info h2 { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+.mp-profile-info p { color: #666; font-size: 14px; }
+
+.mp-check-btn {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 30px;
+    transition: all 0.2s;
+}
+.mp-check-btn:hover { background-color: #f5f5f5; }
+
+/* 폼 영역 */
+.mp-form-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- [추가/수정] 태그 박스 스타일 --- */
+.tag-section {
+    position: relative; /* 추천 리스트 위치 기준 */
+    width: 100%;
+}
+
+.tag-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #4285F4; /* 포인트 컬러 */
+}
+
+.tag-input-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap; /* 태그가 많으면 줄바꿈 */
+    gap: 8px;
+    min-height: 50px;
+    background-color: white;
+}
+
+.tag-input-container:focus-within {
+    border-color: #4285F4; /* 포커스 시 테두리 색 변경 */
+}
+
+/* 태그 칩 (캡슐 모양) */
+.tag-chip {
+    background-color: #e8f0fe;
+    color: #1967d2;
+    border-radius: 16px;
+    padding: 5px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tag-remove-btn {
+    background: none;
+    border: none;
+    color: #1967d2;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+/* 태그 입력 필드 (투명하게) */
+.tag-input-field {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    flex: 1; /* 남은 공간 차지 */
+    min-width: 120px;
+}
+
+/* 추천 리스트 (드롭다운) */
+.suggestion-list {
+    position: absolute;
+    top: 100%; /* 입력창 바로 아래 */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestion-item, .suggestion-list li {
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.suggestion-list li:hover {
+    background-color: #f0f4ff;
+}
+/* --------------------------------- */
+
+.mp-textarea-intro {
+    width: 100%;
+    height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 16px;
+    resize: none;
+}
+
+.mp-save-area {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.mp-save-btn {
+    width: 100px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* 리스트 스타일 (기존 유지) */
+.mp-list-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.mp-post-item {
+    display: flex;
+    gap: 15px;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.mp-post-img { width: 100px; height: 70px; flex-shrink: 0; }
+.mp-post-img img, .gray-box-sm {
+    width: 100%; height: 100%; background-color: #d9d9d9;
+    object-fit: cover; border-radius: 4px;
+}
+.mp-post-text h3 { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+.mp-post-text p { font-size: 14px; color: #555; }
+.no-posts-msg {
+    text-align: center; margin-top: 50px; font-size: 20px; font-weight: bold; color: #333;
+}

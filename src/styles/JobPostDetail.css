@@ -1,0 +1,127 @@
+.jd-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 네비게이션 바 */
+.navbar {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    background-color: white;
+    box-sizing: border-box;
+}
+.nav-logo { color: #2E7D32; font-size: 26px; font-weight: bold; cursor: pointer; text-shadow: -1px -1px 0 #4285F4, 1px -1px 0 #4285F4, -1px 1px 0 #4285F4, 1px 1px 0 #4285F4; }
+.nav-links { display: flex; gap: 6vw; font-size: 18px; font-weight: bold; color: #333; }
+.nav-links span { cursor: pointer; }
+.auth-btn-area { display: flex; gap: 10px; }
+.nav-btn { padding: 8px 20px; border-radius: 4px; border: 1px solid #ddd; background-color: white; color: #4285F4; font-weight: bold; cursor: pointer; }
+.nav-divider { width: 100%; height: 1px; background-color: #eee; }
+
+/* 상세 컨텐츠 */
+.jd-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 50px;
+}
+
+.back-link-area {
+    margin-bottom: 30px;
+    color: #666;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* 이미지 */
+.jd-images-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+.jd-main-img {
+    flex: 1.2;
+    height: 400px;
+    background-color: #d9d9d9;
+    border-radius: 4px;
+}
+.jd-sub-img {
+    flex: 0.8;
+    height: 400px;
+    background-color: #d9d9d9;
+    border-radius: 4px;
+}
+
+/* 헤더 정보 */
+.jd-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+}
+
+.jd-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.jd-subtitle {
+    font-size: 18px;
+    color: #555;
+}
+.bold-text {
+    font-weight: bold;
+    color: #000;
+    margin-right: 10px;
+}
+
+/* 지원 버튼 */
+.apply-btn {
+    width: 250px;
+    height: 60px;
+    background-color: #4285F4;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.apply-btn:hover {
+    background-color: #3367d6;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #eee;
+    margin-bottom: 40px;
+}
+
+/* 섹션 */
+.jd-section {
+    margin-bottom: 50px;
+}
+.jd-section-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 태그 */
+.jd-tags {
+    display: flex;
+    gap: 15px;
+}
+.jd-tags span {
+    color: #4285F4;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}

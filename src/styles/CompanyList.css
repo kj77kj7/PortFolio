@@ -1,0 +1,262 @@
+/* CompanyList.css */
+
+/* 전체 컨테이너 */
+.cl-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    position: relative; /* 팝업 위치 기준 */
+}
+
+/* --- 네비게이션 바 (공통 스타일) --- */
+.navbar {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    background-color: white;
+    box-sizing: border-box;
+}
+.nav-logo { 
+    color: #2E7D32; 
+    font-size: 26px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    text-shadow: -1px -1px 0 #4285F4, 1px -1px 0 #4285F4, -1px 1px 0 #4285F4, 1px 1px 0 #4285F4; 
+}
+.nav-links { display: flex; gap: 6vw; font-size: 18px; font-weight: bold; color: #333; }
+.nav-links span { cursor: pointer; }
+.auth-btn-area { display: flex; gap: 10px; }
+.nav-btn { 
+    padding: 8px 20px; 
+    border-radius: 4px; 
+    border: 1px solid #ddd; 
+    background-color: white; 
+    color: #4285F4; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+.nav-divider { width: 100%; height: 1px; background-color: #eee; }
+
+
+/* --- 메인 컨텐츠 영역 --- */
+.cl-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 페이지 타이틀 */
+.cl-header-box {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.cl-title { 
+    font-size: 32px; 
+    font-weight: bold; 
+}
+.cl-underline { 
+    width: 300px; 
+    height: 2px; 
+    background-color: #ddd; 
+    margin: 10px auto 0; 
+}
+
+/* --- [검색창] 태그 박스 스타일 --- */
+.cl-search-container {
+    width: 70%; /* 너비를 넉넉하게 */
+    min-height: 60px; /* 높이 유동적 (태그 쌓이면 늘어남) */
+    border: 2px solid #ddd;
+    border-radius: 30px; /* 둥근 모서리 */
+    margin-bottom: 60px;
+    display: flex;
+    align-items: center; 
+    padding: 5px 20px; /* 내부 여백 */
+    background-color: white;
+    transition: border-color 0.2s;
+}
+
+.cl-search-container:focus-within {
+    border-color: #4285F4; /* 입력 중일 때 파란 테두리 강조 */
+}
+
+/* 태그들이 쌓이는 영역 */
+.cl-tag-box {
+    flex: 1; /* 남은 공간 모두 차지 */
+    display: flex;
+    flex-wrap: wrap; /* 태그 많으면 줄바꿈 */
+    gap: 8px;
+    align-items: center;
+}
+
+/* 태그 칩 (Chip) 디자인 */
+.cl-search-chip {
+    background-color: #e8f0fe;
+    color: #1967d2;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap; /* 칩 내부 줄바꿈 방지 */
+}
+
+/* 태그 삭제 버튼 (x) */
+.cl-search-chip button {
+    background: none;
+    border: none;
+    color: #1967d2;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+.cl-search-chip button:hover {
+    color: #d32f2f; /* 삭제 버튼 호버 시 빨간색 */
+}
+
+/* 실제 입력 input (투명하게 처리) */
+.cl-tag-input {
+    border: none;
+    outline: none;
+    font-size: 18px;
+    min-width: 150px;
+    flex: 1;
+    background: transparent;
+    height: 40px;
+}
+
+/* 돋보기 아이콘 버튼 */
+.cl-search-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+    padding-left: 15px;
+}
+
+
+/* --- 검색 결과 없음 메시지 --- */
+.no-result-msg {
+    grid-column: 1 / -1; /* 그리드 전체 가로폭 사용 */
+    text-align: center;
+    padding: 80px 0;
+    color: #999;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* --- 회사 카드 그리드 --- */
+.cl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3열 배치 */
+    gap: 40px;
+    width: 100%;
+    margin-bottom: 50px;
+    min-height: 300px; /* 결과 없어도 최소 높이 유지 */
+}
+
+.cl-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+/* 카드 호버 시 살짝 위로 뜨는 효과 (선택사항) */
+.cl-card:hover {
+    transform: translateY(-5px);
+}
+
+.cl-card-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background-color: #d9d9d9;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+.cl-card-name { 
+    font-size: 18px; 
+    font-weight: bold; 
+    margin-bottom: 5px; 
+}
+.cl-card-addr { 
+    font-size: 14px; 
+    color: #888; 
+}
+
+/* 하단 안내 문구 */
+.cl-footer { 
+    color: #999; 
+    font-size: 14px; 
+    margin-top: 20px; 
+}
+
+
+/* --- 팝업 (Overlay) 스타일 --- */
+.cl-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 마우스 이벤트가 뒤쪽(카드)으로 통과되게 함 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.cl-popup-box {
+    width: 400px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.cl-popup-img {
+    width: 100%;
+    height: 200px;
+    background-color: #d9d9d9;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.cl-popup-name { 
+    font-size: 24px; 
+    font-weight: bold; 
+    margin-bottom: 10px; 
+}
+.cl-popup-addr { 
+    font-size: 16px; 
+    color: #666; 
+    margin-bottom: 20px; 
+}
+.cl-popup-tags { 
+    color: #4285F4; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+    word-break: break-all; 
+}
+.cl-popup-intro {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-line;
+    text-align: left;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
