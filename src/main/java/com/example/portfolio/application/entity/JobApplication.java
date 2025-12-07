@@ -1,6 +1,6 @@
 package com.example.portfolio.application.entity;
 
-import com.example.portfolio.jobpost.entity.Jobpost;
+import com.example.portfolio.job.entity.JobPost;
 import com.example.portfolio.resume.entity.Resume;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +26,7 @@ public class JobApplication {
     // 지원한 공고
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_post_id")
-    private Jobpost jobPost;
+    private JobPost jobPost;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
