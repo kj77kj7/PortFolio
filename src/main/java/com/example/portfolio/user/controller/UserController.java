@@ -36,7 +36,6 @@ public class UserController {
         }
     }
 
-    // [수정] 로그인 시 프로필 사진(profileImage)도 함께 반환
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
         User user = userService.findByUsername(loginRequest.getUsername());
@@ -52,9 +51,9 @@ public class UserController {
         response.put("username", user.getUsername());
         response.put("name", user.getName());
         response.put("role", user.getRole());
-        response.put("career", user.getCareer());      // 경력 추가
-        response.put("jobGroup", user.getJobGroup());  // 직군 추가
-        response.put("profileImage", user.getProfileImage()); // [핵심] 사진 데이터 추가
+        response.put("career", user.getCareer());
+        response.put("jobGroup", user.getJobGroup());
+        response.put("profileImage", user.getProfileImage());
 
         return ResponseEntity.ok(response);
     }
@@ -72,11 +71,15 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // [수정] 회사 정보 업데이트 (이미지 포함)
     @PutMapping("/{id}/info")
     public ResponseEntity<?> updateCompanyInfo(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         String tags = payload.get("tags");
         String intro = payload.get("intro");
-        User updatedUser = userService.updateCompanyInfo(id, tags, intro);
+        String profileImage = payload.get("profileImage"); // [추가] 이미지 수신
+
+        // Service 호출 시 이미지 파라미터 추가
+        User updatedUser = userService.updateCompanyInfo(id, tags, intro, profileImage);
         return ResponseEntity.ok(updatedUser);
     }
 }

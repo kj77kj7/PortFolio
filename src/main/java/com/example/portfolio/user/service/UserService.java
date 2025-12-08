@@ -19,33 +19,25 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // 정규식 패턴 정의
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,15}$";
 
     public User register(RegisterRequest request) {
-        // 1. 아이디 중복 및 길이 검사
         if (request.getUsername().length() < 6 || request.getUsername().length() > 15) {
             throw new RuntimeException("아이디는 6자 이상 15자 이하여야 합니다.");
         }
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("이미 사용 중인 아이디입니다.");
         }
-
-        // 2. 비밀번호 형식 검사 (영문, 특수문자 포함 8~15자)
         if (!Pattern.matches(PASSWORD_PATTERN, request.getPassword())) {
             throw new RuntimeException("비밀번호는 영문자와 특수문자를 반드시 포함하여 8~15자여야 합니다.");
         }
-
-        // 3. 이메일 형식 및 중복 검사
         if (!Pattern.matches(EMAIL_PATTERN, request.getEmail())) {
             throw new RuntimeException("올바른 이메일 형식이 아닙니다.");
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("이미 사용 중인 이메일입니다.");
         }
-
-        // [추가] 기업 회원일 경우 사업자 번호 중복 검사
         if (request.getRole() == Role.COMPANY) {
             if (userRepository.findByBusinessNumber(request.getBusinessNumber()).isPresent()) {
                 throw new RuntimeException("이미 가입 되어있는 회사입니다.");
@@ -61,8 +53,8 @@ public class UserService {
                 .birthdate(request.getBirthdate())
                 .career(request.getCareer())
                 .jobGroup(request.getJobGroup())
-                .businessNumber(request.getBusinessNumber()) // 추가
-                .address(request.getAddress())               // 추가
+                .businessNumber(request.getBusinessNumber())
+                .address(request.getAddress())
                 .role(request.getRole())
                 .createdAt(LocalDateTime.now().toString())
                 .build();
@@ -75,19 +67,20 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
     }
 
+    // [수정] 프로필 이미지도 업데이트하도록 파라미터 추가
     @Transactional
-    public User updateCompanyInfo(Long userId, String tags, String intro) {
+    public User updateCompanyInfo(Long userId, String tags, String intro, String profileImage) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        // 기업 회원만 수정 가능하도록 체크 (선택사항)
         if (user.getRole() != Role.COMPANY) {
             throw new RuntimeException("기업 회원만 정보를 수정할 수 있습니다.");
         }
 
         user.setTags(tags);
-        user.setCareer(intro); // 기존 career 필드를 회사 소개(Introduction)로 사용
+        user.setCareer(intro); // 기존 career 필드를 소개글로 사용
+        user.setProfileImage(profileImage); // [추가] 이미지 저장
+
         return userRepository.save(user);
     }
-
 }

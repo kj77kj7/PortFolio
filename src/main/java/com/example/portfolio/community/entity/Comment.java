@@ -4,36 +4,31 @@ import com.example.portfolio.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "community_posts")
-public class CommunityPost {
+@Table(name = "comments")
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private CommunityPost communityPost;
 
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    @Column(columnDefinition = "LONGTEXT")
-    private String images; // 이미지 (JSON String)
-
-    // 게시판 노출 정보
-    private int viewCount;    // 조회수
-    private int likeCount;    // 추천수
-    private int commentCount; // 댓글수
 
     private String createdAt;
 }

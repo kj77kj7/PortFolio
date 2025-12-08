@@ -1,12 +1,12 @@
 package com.example.portfolio.community.service;
 
 import com.example.portfolio.community.entity.CommunityPost;
-import com.example.portfolio.community.entity.CommunityType;
 import com.example.portfolio.community.repository.CommunityPostRepository;
 import com.example.portfolio.user.entity.User;
 import com.example.portfolio.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +21,8 @@ public class CommunityService {
     /**
      * 게시글 생성
      */
-    public CommunityPost createPost(Long userId, String title, String body, CommunityType type) {
+    @Transactional
+    public CommunityPost createPost(Long userId, String title, String content, String images) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
@@ -29,8 +30,11 @@ public class CommunityService {
         CommunityPost post = CommunityPost.builder()
                 .user(user)
                 .title(title)
-                .body(body)
-                .type(type)
+                .content(content)
+                .images(images)
+                .viewCount(0)
+                .likeCount(0)
+                .commentCount(0)
                 .createdAt(LocalDateTime.now().toString())
                 .build();
 
@@ -40,14 +44,15 @@ public class CommunityService {
     /**
      * 게시글 수정
      */
-    public CommunityPost updatePost(Long postId, String title, String body, CommunityType type) {
+    @Transactional
+    public CommunityPost updatePost(Long postId, String title, String content, String images) {
 
         CommunityPost post = communityPostRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다."));
 
         post.setTitle(title);
-        post.setBody(body);
-        post.setType(type);
+        post.setContent(content);
+        post.setImages(images);
 
         return communityPostRepository.save(post);
     }
@@ -55,6 +60,7 @@ public class CommunityService {
     /**
      * 게시글 삭제
      */
+    @Transactional
     public void deletePost(Long postId) {
         CommunityPost post = communityPostRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다."));
@@ -71,25 +77,16 @@ public class CommunityService {
     }
 
     /**
-     * 전체 게시글 목록
+     * 전체 게시글 목록 (최신순)
      */
     public List<CommunityPost> getAllPosts() {
-        return communityPostRepository.findAll();
-    }
-
-    /**
-     * 타입별 게시글 조회
-     * ex) QNA / RESUME_SHARE / FEEDBACK
-     */
-    public List<CommunityPost> getPostsByType(CommunityType type) {
-        return communityPostRepository.findByType(type);
+        return communityPostRepository.findAllByOrderByCreatedAtDesc();
     }
 
     /**
      * 특정 사용자의 작성글 목록
      */
     public List<CommunityPost> getPostsByUser(Long userId) {
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
 
