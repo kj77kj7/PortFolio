@@ -10,12 +10,12 @@
 /* --- 네비게이션 바 --- */
 .navbar {
     width: 100%;
-    height: 80px; /* 높이 고정 */
+    height: 80px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px; /* 좌우 여백 */
-    border-bottom: 1px solid #eee; /* 하단 구분선 추가 */
+    padding: 0 50px;
+    border-bottom: 1px solid #eee;
     background-color: white;
 }
 
@@ -28,16 +28,24 @@
     font-size: 26px;
     font-weight: bold;
     cursor: pointer;
-    /* 텍스트 테두리 효과 */
     text-shadow: -1px -1px 0 #4285F4, 1px -1px 0 #4285F4, -1px 1px 0 #4285F4, 1px 1px 0 #4285F4;
 }
 
 .nav-links {
     display: flex;
-    gap: 6vw; /* 화면 크기에 비례해서 간격 조정 */
+    gap: 6vw;
     font-size: 18px;
     font-weight: bold;
     color: #333;
+}
+
+.nav-links span {
+    cursor: pointer;
+}
+
+.auth-btn-area {
+    display: flex;
+    gap: 10px;
 }
 
 .nav-btn {
@@ -52,9 +60,9 @@
 
 /* --- 메인 컨텐츠 --- */
 .main-content {
-    flex: 1; /* 남은 공간 꽉 채우기 */
+    flex: 1;
     width: 100%;
-    padding: 50px 5%; /* 좌우 5% 여백 (화면이 커져도 비율 유지) */
+    padding: 50px 5%; /* 반응형 여백 */
 }
 
 /* 검색 배너 */
@@ -106,93 +114,7 @@
     margin-bottom: 20px;
 }
 
-/* 그리드 (3열) - 화면 꽉 차게 */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3등분 */
-    gap: 30px; /* 카드 사이 간격 */
-    width: 100%;
-}
-
-/* 회색 패널 */
-.gray-panel {
-    background-color: #d9d9d9;
-    width: 100%;
-    border-radius: 8px;
-}
-
-/* 구인구직 카드 */
-.image-placeholder {
-    width: 100%;
-    aspect-ratio: 16 / 9; /* 16:9 와이드 비율 */
-    margin-bottom: 15px;
-}
-
-.job-info h3 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.job-info p {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 2px;
-}
-
-/* 회사정보 카드 */
-.company-placeholder {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-}
-
-/* 커뮤니티 섹션 (2:1 비율) */
-.community-section {
-    display: flex;
-    gap: 30px;
-}
-
-.community-left {
-    flex: 2; /* 66% 차지 */
-}
-
-.community-list-box {
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.community-item {
-    padding: 15px;
-    border-bottom: 1px solid #f5f5f5;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.community-right {
-    flex: 1; /* 33% 차지 */
-}
-
-.ad-placeholder {
-    width: 100%;
-    height: 100%;
-    min-height: 250px;
-    border-radius: 10px;
-}
-
-/* [추가] 우측 상단 버튼 영역 (버튼들 가로 배치) */
-.auth-btn-area {
-    display: flex;
-    gap: 10px; /* 버튼 사이 간격 10px */
-}
-
-/* ... 기존 css 코드 아래에 추가 ... */
-
-/* 캐러셀 래퍼: 버튼과 그리드를 가로로 배치 */
+/* 캐러셀 관련 */
 .carousel-wrapper {
     display: flex;
     align-items: center;
@@ -201,13 +123,11 @@
     width: 100%;
 }
 
-/* 보여지는 영역 */
 .carousel-viewport {
-    flex: 1; /* 남은 공간 모두 차지 */
-    overflow: hidden; /* 넘치는 것 숨김 */
+    flex: 1;
+    overflow: hidden;
 }
 
-/* 화살표 버튼 스타일 */
 .carousel-arrow {
     width: 50px;
     height: 50px;
@@ -222,7 +142,7 @@
     justify-content: center;
     align-items: center;
     transition: all 0.2s;
-    flex-shrink: 0; /* 버튼 크기 줄어들지 않게 고정 */
+    flex-shrink: 0;
     z-index: 10;
 }
 
@@ -231,8 +151,130 @@
     border-color: #999;
 }
 
-/* 비활성화 상태 (더 이상 넘길 것 없을 때) */
 .carousel-arrow:disabled {
     opacity: 0.3;
     cursor: default;
+}
+
+/* 그리드 및 카드 스타일 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    width: 100%;
+}
+
+.gray-panel {
+    background-color: #d9d9d9;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.image-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 15px;
+}
+
+.job-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.job-card:hover {
+    transform: translateY(-5px);
+}
+
+.job-info h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.job-info p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.job-company {
+    font-weight: bold;
+    color: #333 !important;
+}
+
+.company-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.company-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.company-card:hover {
+    transform: translateY(-5px);
+}
+
+/* [수정] 커뮤니티 섹션 스타일 (전체 너비 사용) */
+.community-section-full {
+    width: 100%;
+}
+
+.community-top-list {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.community-top-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 10px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.community-top-item:last-child {
+    border-bottom: none;
+}
+
+.community-top-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* 왼쪽 영역: 순위, 제목, 댓글수 */
+.top-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.top-rank {
+    font-weight: bold;
+    font-size: 18px;
+    color: #2E7D32; /* 로고색 포인트 */
+    width: 25px;    /* 순위 정렬을 위한 고정 너비 */
+}
+
+.top-title {
+    font-weight: 500;
+}
+
+.top-comment-cnt {
+    color: #ff5252; /* 댓글수 빨간색 */
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* 오른쪽 영역: 작성자, 추천수 */
+.top-item-right {
+    font-size: 14px;
+    color: #666;
 }

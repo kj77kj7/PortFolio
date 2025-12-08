@@ -6,34 +6,51 @@ import Signup from './pages/Signup';
 import CompanySignup from './pages/CompanySignup';
 import JobPostDetail from './pages/JobPostDetail';
 import CompanyDetail from './pages/CompanyDetail';
-import JobMain from './pages/JobMain';       
-import JobCreate from './pages/JobCreate';   
-import MyPage from './pages/MyPage';         // [추가] 기업 마이페이지
-import CompanyList from './pages/CompanyList'; // [추가] 회사정보 목록 (팝업 기능 포함)
+import JobMain from './pages/JobMain';
+import JobCreate from './pages/JobCreate';
+import CompanyList from './pages/CompanyList';
+import ResumeCreate from './pages/ResumeCreate';
+import CommunityMain from './pages/CommunityMain';
+import CommunityWrite from './pages/CommunityWrite';
+import CommunityDetail from './pages/CommunityDetail'; // [추가
+
+// [중요] 아래 경로를 'CompanyMyPage'가 아니라 'MyPage'로 바꿔야 분기 처리가 됩니다.
+import MyPage from './pages/MyPage'; 
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* 기본 경로: 홈 화면 */}
         <Route path="/" element={<Home />} />
         
-        {/* 인증 관련 */}
+        {/* 인증 */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/company-signup" element={<CompanySignup />} />
         
-        {/* 마이페이지 & 회사 목록 (새로 추가된 기능) */}
+        {/* [중요] 마이페이지 경로 */}
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/companies" element={<CompanyList />} />
 
-        {/* 상세 페이지 (ID 파라미터 포함) */}
+        {/* 상세 페이지 */}
         <Route path="/job-detail/:id" element={<JobPostDetail />} />
         <Route path="/company-detail/:id" element={<CompanyDetail />} />
 
-        {/* 구인구직 관련 */}
+        {/* 구인구직 */}
         <Route path="/jobs" element={<JobMain />} />
         <Route path="/jobs/create" element={<JobCreate />} />
+
+        {/* 이력서 작성 */}
+        <Route path="/resumes/create" element={<ResumeCreate />} />
+
+
+        {/* [추가] 커뮤니티 라우트 */}
+        <Route path="/community" element={<CommunityMain />} />
+        <Route path="/community/write" element={<CommunityWrite />} />
+
+        {/* [추가] 커뮤니티 상세 경로 */}
+        <Route path="/community/:id" element={<CommunityDetail />} />
+
       </Routes>
     </Router>
   );

@@ -1,0 +1,260 @@
+.ump-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 네비게이션바 재사용 */
+.navbar { padding: 0 50px; height: 80px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+.nav-logo { color: #2E7D32; font-size: 26px; font-weight: bold; cursor: pointer; }
+.nav-links { display: flex; gap: 40px; font-weight: bold; color: #333; }
+.nav-links span { cursor: pointer; }
+
+.back-link {
+    max-width: 800px;
+    margin: 20px auto;
+    color: #666;
+    cursor: pointer;
+    padding-left: 20px;
+}
+
+.ump-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px 100px 20px;
+}
+
+.ump-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.ump-divider {
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    margin-bottom: 40px;
+}
+
+/* 프로필 섹션 */
+.ump-profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.ump-avatar {
+    width: 120px;
+    height: 120px;
+    background-color: #d9d9d9;
+    border-radius: 50%;
+}
+
+.ump-user-info h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+.ump-user-info p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* 이력서 배너 */
+.ump-resume-banner {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 50px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.ump-resume-banner:hover {
+    background-color: #f9f9f9;
+}
+
+.icon-circle {
+    width: 50px; height: 50px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; color: white;
+    margin-right: 20px;
+}
+
+.banner-text h3 { font-size: 18px; margin-bottom: 5px; }
+.banner-text p { font-size: 14px; color: #666; }
+
+.arrow-icon {
+    margin-left: auto;
+    font-size: 24px;
+    color: #ccc;
+}
+
+/* 구직활동 섹션 */
+.ump-section { margin-bottom: 50px; }
+.section-label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+
+.ump-app-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ump-app-card {
+    display: flex;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    align-items: center;
+    transition: box-shadow 0.2s;
+}
+.ump-app-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ump-card-img {
+    width: 140px;
+    height: 100px;
+    margin-right: 20px;
+}
+.ump-card-img img, .gray-box-md {
+    width: 100%; height: 100%;
+    background-color: #d9d9d9;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.ump-card-info {
+    flex: 1;
+}
+.ump-card-info h4 { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+.company-name { font-size: 14px; color: #666; margin-bottom: 2px; }
+.company-addr { font-size: 12px; color: #999; margin-bottom: 10px; }
+.career-tag { font-size: 12px; font-weight: bold; color: #333; }
+
+.ump-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    min-width: 80px;
+}
+
+/* 상태 뱃지 스타일 */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+}
+.status-badge.pending { background-color: white; color: #555; }
+.status-badge.passed { background-color: #e8f5e9; color: #2E7D32; border-color: #2E7D32; }
+.status-badge.failed { background-color: #ffebee; color: #d32f2f; border-color: #d32f2f; }
+
+.withdraw-btn {
+    padding: 5px 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #666;
+}
+.withdraw-btn:hover { background-color: #f0f0f0; }
+
+.no-data-msg { color: #999; text-align: center; padding: 20px; }
+
+/* [수정/추가] 게시글 리스트 스타일 */
+.ump-post-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ump-post-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 2px solid #333;
+}
+
+.ump-post-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.ump-post-row:hover {
+    background-color: #f9f9f9;
+}
+
+.ump-post-title-text {
+    font-size: 16px;
+    color: #333;
+    flex: 1; /* 제목이 남은 공간 차지 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 20px;
+}
+
+.ump-post-date {
+    font-size: 14px;
+    color: #999;
+    width: 100px;
+    text-align: right;
+}
+
+.no-data-text { 
+    color: #999; 
+    text-align: center; 
+    padding: 20px; 
+    font-size: 15px; 
+}
+
+/* 페이지네이션 버튼 */
+.ump-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.ump-page-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    font-weight: bold;
+}
+.ump-page-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+.ump-page-btn:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.ump-page-info {
+    font-size: 14px;
+    color: #555;
+}

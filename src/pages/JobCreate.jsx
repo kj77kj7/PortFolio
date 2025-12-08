@@ -56,7 +56,6 @@ const JobCreate = () => {
     });
   };
 
-  // [수정] 순환형 네비게이션 로직
   const nextImage = () => {
     if (images.length === 0) return;
     setImageIndex((prev) => (prev + 1) % images.length);
@@ -67,19 +66,24 @@ const JobCreate = () => {
     setImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // 현재 보여줄 이미지 2개 계산
   const getVisibleImages = () => {
       if (images.length === 0) return [];
       const first = images[imageIndex];
-      // 마지막 이미지일 때 다음 이미지는 0번(처음) 이미지
       const secondIndex = (imageIndex + 1) % images.length;
       const second = images[secondIndex];
       return [first, second];
   };
 
   const handleSubmit = () => {
+    // 1. 필수 텍스트 입력 확인
     if (!formData.title || !formData.startDate || !formData.endDate || !formData.content) {
         alert("모든 항목을 입력해주세요.");
+        return;
+    }
+
+    // [수정] 2. 사진 개수 검사 (최소 2장)
+    if (images.length < 2) {
+        alert("구인 공고의 신뢰도를 위해 최소 2장 이상의 사진을 등록해야 합니다.");
         return;
     }
 
@@ -137,27 +141,21 @@ const JobCreate = () => {
             </div>
             
             <div className="carousel-container">
-                {/* [수정] 왼쪽 화살표: 사진이 3장 이상일 때 항상 표시 */}
                 {images.length >= 3 && (
                     <button className="carousel-btn left" onClick={prevImage}>&lt;</button>
                 )}
 
                 <div className="carousel-view">
                     {images.length === 0 ? (
-                        /* 이미지가 없을 때: 빈 회색 박스 2개 */
                         <>
                             <div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}></div>
                             <div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}></div>
                         </>
                     ) : (
-                        /* 이미지가 있을 때 */
                         <>
-                            {/* 첫 번째 이미지 */}
                             <div className="uploaded-image-box">
                                 <img src={visibleImages[0]} alt="img-1" />
                             </div>
-
-                            {/* 두 번째 이미지 (1장만 있을 땐 빈 박스로 표시) */}
                             {images.length === 1 ? (
                                 <div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}>
                                     <span>+</span>
@@ -171,11 +169,12 @@ const JobCreate = () => {
                     )}
                 </div>
 
-                {/* [수정] 오른쪽 화살표: 사진이 3장 이상일 때 항상 표시 */}
                 {images.length >= 3 && (
                     <button className="carousel-btn right" onClick={nextImage}>&gt;</button>
                 )}
             </div>
+            {/* 안내 문구 추가 */}
+            <p style={{fontSize:'12px', color:'#d32f2f', marginTop:'5px'}}>* 최소 2장 이상의 사진이 필요합니다.</p>
         </div>
 
         {/* 회사명 */}
@@ -201,7 +200,7 @@ const JobCreate = () => {
             </div>
         </div>
 
-        {/* 경력 (멀티 선택) */}
+        {/* 경력 */}
         <div className="jc-form-group">
             <label>총 경력 (중복 선택 가능)</label>
             <div className="career-selector">
@@ -225,7 +224,6 @@ const JobCreate = () => {
             </div>
         </div>
 
-        {/* 하단 버튼 */}
         <div className="jc-actions">
             <button className="jc-btn save" onClick={handleSubmit}>저장</button>
             <button className="jc-btn delete" onClick={() => navigate(-1)}>취소</button>

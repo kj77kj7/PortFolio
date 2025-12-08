@@ -1,0 +1,300 @@
+/* 전체 컨테이너 */
+.cd-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #fff;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 상단 네비게이션바 */
+.cd-nav {
+    width: 100%;
+    height: 70px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.cd-left-back {
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cd-nav-right span {
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/* 메인 래퍼 */
+.cd-wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px 20px;
+}
+
+/* 메인 타이틀 */
+.cd-main-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.cd-divider {
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    margin-bottom: 25px;
+}
+
+/* 게시글 제목 */
+.cd-post-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* 작성자 정보 영역 (우측 정렬 + 세로 배치) */
+.cd-author-info {
+    text-align: right;
+    font-size: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.cd-author-top {
+    display: block;
+}
+
+.cd-author-name {
+    font-weight: 700;
+}
+.cd-author-sub {
+    color: #777;
+    margin-left: 6px;
+}
+
+/* 게시글 본문 수정 버튼 */
+.cd-post-edit-btn {
+    font-size: 13px;
+    color: #999;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.cd-post-edit-btn:hover {
+    color: #4285F4;
+}
+
+/* 이미지 박스 */
+.cd-img-box {
+    width: 100%;
+    background: #eee;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 25px;
+}
+
+.cd-post-img {
+    width: 100%;
+    border-radius: 6px;
+}
+
+/* 본문 텍스트 */
+.cd-content {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 30px;
+    white-space: pre-line;
+}
+
+/* 액션바 (좋아요, 댓글수) */
+.cd-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.cd-icon-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    color: #555;
+}
+
+.cd-icon-heart {
+    font-size: 22px;
+}
+
+/* --- 댓글 리스트 스타일 --- */
+.cd-comment-list {
+    margin-top: 20px;
+}
+
+.cd-comment-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.cd-comment-profile {
+    width: 45px;
+    height: 45px;
+    background: #ddd;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.cd-comment-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cd-comment-body {
+    flex: 1;
+}
+
+/* 댓글 메타 정보 (가로 정렬) */
+.cd-comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.c-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+}
+.c-sub {
+    font-size: 13px;
+    color: #888;
+    padding-top: 2px;
+}
+
+/* 댓글 수정/삭제 버튼 그룹 */
+.cd-comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 5px;
+}
+
+/* 개별 버튼 스타일 */
+.cd-comment-btn {
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
+}
+.cd-comment-btn:hover {
+    color: #4285F4;
+    text-decoration: underline;
+}
+
+/* 삭제 버튼 (빨간색 포인트) */
+.cd-comment-btn.delete:hover {
+    color: #d32f2f;
+}
+
+/* 구분선 (|) */
+.cd-comment-divider {
+    font-size: 11px;
+    color: #ddd;
+    margin-top: -2px;
+}
+
+/* 댓글 본문 */
+.c-text {
+    font-size: 15px;
+    margin-top: 0;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* 댓글 수정창 영역 */
+.cd-edit-wrap {
+    margin-top: 5px;
+}
+.cd-edit-wrap textarea {
+    width: 100%;
+    height: 60px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.save-edit-btn,
+.cancel-edit-btn {
+    padding: 6px 12px;
+    margin-right: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.save-edit-btn {
+    background: #4285F4;
+    color: #fff;
+}
+.cancel-edit-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* 하단 댓글 입력창 */
+.cd-comment-input {
+    margin-top: 35px;
+    display: flex;
+    gap: 10px;
+}
+
+.cd-comment-input textarea {
+    flex: 1;
+    height: 55px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    resize: none;
+    font-size: 15px;
+    font-family: inherit;
+}
+.cd-comment-input textarea:focus {
+    outline: none;
+    border-color: #4285F4;
+}
+
+.cd-comment-save-btn {
+    width: 80px;
+    background: #4285F4;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+.cd-comment-save-btn:hover {
+    background-color: #3367d6;
+}

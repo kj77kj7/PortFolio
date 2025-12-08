@@ -8,15 +8,15 @@ const Home = () => {
   const [userName, setUserName] = useState('');
   
   // 데이터 상태
-  const [companyData, setCompanyData] = useState([]); // 회사 정보
-  const [jobPosts, setJobPosts] = useState([]);       // 실제 구인 공고
-  const [combinedJobs, setCombinedJobs] = useState([]); // 구인구직 통합 리스트
+  const [companyData, setCompanyData] = useState([]); 
+  const [combinedJobs, setCombinedJobs] = useState([]); 
+  const [topPosts, setTopPosts] = useState([]); // 인기 게시글 상태
 
-  // 슬라이드 상태 관리 (구인구직 / 회사정보 각각)
-  const [jobSlide, setJobSlide] = useState(0);        // 구인구직 슬라이드 인덱스
-  const [companySlide, setCompanySlide] = useState(0); // [추가] 회사정보 슬라이드 인덱스
+  // 슬라이드 상태
+  const [jobSlide, setJobSlide] = useState(0);        
+  const [companySlide, setCompanySlide] = useState(0); 
   
-  const ITEMS_PER_PAGE = 3; // 한 번에 보여줄 카드 수
+  const ITEMS_PER_PAGE = 3; 
 
   useEffect(() => {
     // 1. 로그인 상태 확인
@@ -26,18 +26,18 @@ const Home = () => {
       setUserName(user.name);
     }
 
-    // 2. 데이터 병렬 Fetch
+    // 2. 데이터 병렬 Fetch (기업, 채용공고, 인기글)
     Promise.all([
       fetch('http://localhost:8080/api/users/companies').then(res => res.json()),
-      fetch('http://localhost:8080/api/jobs').then(res => res.json())
+      fetch('http://localhost:8080/api/jobs').then(res => res.json()),
+      fetch('http://localhost:8080/api/community/top').then(res => res.json()) // 인기글 호출
     ])
-    .then(([companies, jobs]) => {
-      // [수정] 회사 정보 최신순 정렬 (ID 역순)
+    .then(([companies, jobs, topCommunity]) => {
+      // 회사 정보 (최신순)
       const sortedCompanies = companies.sort((a, b) => b.id - a.id);
       setCompanyData(sortedCompanies);
-      setJobPosts(jobs);
 
-      // 구인구직 통합 리스트 생성
+      // 구인구직 통합 리스트
       const formattedCompanies = sortedCompanies.map(c => ({
         id: c.id,
         isRealJob: false,
@@ -60,6 +60,9 @@ const Home = () => {
 
       // 실제 공고 우선, 그 뒤에 기업 상시채용 정보
       setCombinedJobs([...formattedJobs, ...formattedCompanies]);
+      
+      // 인기글 설정
+      setTopPosts(topCommunity);
     })
     .catch(err => console.error("데이터 로드 실패:", err));
   }, []);
@@ -70,21 +73,12 @@ const Home = () => {
     navigate(0); 
   };
 
-  // --- 구인구직 슬라이드 핸들러 ---
-  const handleJobPrev = () => {
-    if (jobSlide > 0) setJobSlide(prev => prev - 1);
-  };
-  const handleJobNext = () => {
-    if (jobSlide + ITEMS_PER_PAGE < combinedJobs.length) setJobSlide(prev => prev + 1);
-  };
+  // 슬라이드 핸들러
+  const handleJobPrev = () => { if (jobSlide > 0) setJobSlide(prev => prev - 1); };
+  const handleJobNext = () => { if (jobSlide + ITEMS_PER_PAGE < combinedJobs.length) setJobSlide(prev => prev + 1); };
 
-  // --- [추가] 회사정보 슬라이드 핸들러 ---
-  const handleCompanyPrev = () => {
-    if (companySlide > 0) setCompanySlide(prev => prev - 1);
-  };
-  const handleCompanyNext = () => {
-    if (companySlide + ITEMS_PER_PAGE < companyData.length) setCompanySlide(prev => prev + 1);
-  };
+  const handleCompanyPrev = () => { if (companySlide > 0) setCompanySlide(prev => prev - 1); };
+  const handleCompanyNext = () => { if (companySlide + ITEMS_PER_PAGE < companyData.length) setCompanySlide(prev => prev + 1); };
 
   return (
     <div className="home-container">
@@ -97,7 +91,7 @@ const Home = () => {
         <nav className="nav-links">
           <span onClick={() => navigate('/jobs')}>구인구직</span>
           <span onClick={() => navigate('/companies')}>회사정보</span>
-          <span onClick={() => navigate('/')}>커뮤니티</span>
+          <span onClick={() => navigate('/community')}>커뮤니티</span>
         </nav>
 
         <div className="auth-btn-area">
@@ -128,7 +122,7 @@ const Home = () => {
             <div className="search-icon-box">🔍</div>
         </div>
 
-        {/* 3. 구인구직 섹션 */}
+        {/* 구인구직 섹션 */}
         <section className="content-section">
           <h2 className="section-title">구인구직</h2>
           <p className="section-subtitle">가장 최근에 올라온 글을 확인해보세요!</p>
@@ -168,7 +162,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 4. 회사정보 섹션 (수정: 캐러셀 적용 및 최신순 정렬) */}
+        {/* 회사정보 섹션 */}
         <section className="content-section">
           <h2 className="section-title">회사정보</h2>
           <p className="section-subtitle">어떤 기업이 궁금하신가요?</p>
@@ -195,28 +189,37 @@ const Home = () => {
           </div>
         </section>
 
-        {/* 5. 커뮤니티 섹션 */}
-        <section className="content-section community-section">
-          <div className="community-left">
-            <h2 className="section-title">커뮤니티</h2>
-            <p className="section-subtitle">요새 핫한 게시물들은?</p>
-            <div className="community-list-box">
-              <div className="community-item">
-                  <span className="post-index">1.</span>
-                  <span className="post-title">내가 생각하는 복지 최고 회사</span>
-              </div>
-              <div className="community-item">
-                  <span className="post-index">2.</span>
-                  <span className="post-title">면접 질문 리스트 공유합니다</span>
-              </div>
-              <div className="community-item">
-                  <span className="post-index">3.</span>
-                  <span className="post-title">신입 개발자 포트폴리오 조언 좀...</span>
-              </div>
-            </div>
-          </div>
-          <div className="community-right">
-             <div className="gray-panel ad-placeholder"></div>
+        {/* [수정] 커뮤니티 섹션 (추천수 Top 3, 오른쪽 패널 제거) */}
+        <section className="content-section community-section-full">
+          <h2 className="section-title" onClick={() => navigate('/community')} style={{cursor:'pointer'}}>커뮤니티</h2>
+          <p className="section-subtitle">요새 핫한 게시물들은?</p>
+          
+          <div className="community-top-list">
+            {topPosts.length > 0 ? (
+                topPosts.map((post, index) => (
+                    <div 
+                        key={post.id} 
+                        className="community-top-item"
+                        onClick={() => navigate(`/community/${post.id}`)}
+                    >
+                        {/* 왼쪽: 순위 + 제목 + 댓글수 */}
+                        <div className="top-item-left">
+                            <span className="top-rank">{index + 1}.</span>
+                            <span className="top-title">
+                                {post.title} 
+                                <span className="top-comment-cnt"> [{post.commentCount}]</span>
+                            </span>
+                        </div>
+
+                        {/* 오른쪽: 작성자 · 추천수 */}
+                        <div className="top-item-right">
+                            {post.authorName} · <span style={{fontWeight:'bold', color:'#FF5252'}}>추천수 {post.likeCount}</span>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <div style={{padding:'20px', color:'#999', textAlign:'center'}}>등록된 인기 게시글이 없습니다.</div>
+            )}
           </div>
         </section>
 
