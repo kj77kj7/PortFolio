@@ -1,115 +1,207 @@
+/* CompanyDetail.css - v1 디자인(회사소개) + 하단 리스트 기능 통합 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
 .cd-container {
     width: 100%;
     min-height: 100vh;
     background-color: white;
-    font-family: 'Noto Sans KR', sans-serif;
-}
-
-/* 네비게이션 바 */
-.navbar {
-    width: 100%;
-    height: 80px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 50px;
-    background-color: white;
-    box-sizing: border-box;
-}
-.nav-logo { color: #2E7D32; font-size: 26px; font-weight: bold; cursor: pointer; text-shadow: -1px -1px 0 #4285F4, 1px -1px 0 #4285F4, -1px 1px 0 #4285F4, 1px 1px 0 #4285F4; }
-.nav-links { display: flex; gap: 6vw; font-size: 18px; font-weight: bold; color: #333; }
-.nav-links span { cursor: pointer; }
-.auth-btn-area { display: flex; gap: 10px; }
-.nav-btn { padding: 8px 20px; border-radius: 4px; border: 1px solid #ddd; background-color: white; color: #4285F4; font-weight: bold; cursor: pointer; }
-.nav-divider { width: 100%; height: 1px; background-color: #eee; }
-
-/* 컨텐츠 영역 */
-.cd-content {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 60px 20px;
+    font-family: 'Noto Sans KR', sans-serif !important;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.cd-page-title {
-    font-size: 32px;
-    font-weight: bold;
-    margin: 0;
+/* 1. 상단바 (공통 규격: 1080px, 90px) */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; transition: color 0.2s; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+
+
+/* 2. 메인 컨텐츠 영역 (중앙 정렬 1000px) */
+.cd-content {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 20px 20px 100px 20px; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 돌아가기 링크 */
+.back-link-area {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    cursor: pointer;
+    color: #666;
+    font-weight: 500;
+    font-size: 14px;
+}
+.back-link-area:hover { color: #333; text-decoration: underline; }
+
+/* 3. 회사 상세 정보 카드 (v1 스타일) */
+.cd-detail-card {
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 60px auto; /* 하단 리스트와 간격 벌림 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 메인 이미지 (회색 박스) */
+.cd-panel {
+    width: 500px;
+    aspect-ratio: 16/10;
+    background-color: #d9d9d9;
+    border-radius: 4px;
+    margin: 0 auto 30px auto;
+    object-fit: cover;
+}
+
+/* 텍스트 정보 영역 */
+.cd-info-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.cd-company-name {
+    font-size: 22px; 
+    font-weight: 700;
+    margin-bottom: 20px;
     color: #333;
 }
 
-.cd-title-underline {
-    width: 200px;
-    height: 2px;
-    background-color: #ccc;
-    margin-top: 20px;
-    margin-bottom: 40px;
+.cd-meta-info {
+    text-align: left;
+    display: inline-block;
+    margin-bottom: 30px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* 검색창 */
-.cd-search-wrapper {
-    width: 60%;
-    margin-bottom: 60px;
+.cd-meta-info p {
+    font-size: 15px; 
+    margin: 8px 0;
+    color: #555;
+    line-height: 1.6;
 }
+
+.cd-intro-box {
+    width: 100%;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 25px; 
+    text-align: left;
+    box-sizing: border-box;
+}
+.cd-intro-box h4 {
+    font-size: 16px; margin: 0 0 10px 0; color: #333; font-weight: bold;
+}
+.cd-intro-box p {
+    line-height: 1.8; font-size: 14px; color: #666; white-space: pre-line; margin: 0;
+}
+
+
+/* --- [기능 유지] 하단 검색 및 그리드 리스트 (채용공고 등) --- */
+/* 기존 파일에 있던 기능을 v1 디자인(Home/JobMain) 규격에 맞춰 업그레이드 */
+
+.cd-divider {
+    width: 100%;
+    height: 1px;
+    background-color: #eee;
+    margin: 40px 0;
+}
+
+/* 검색창 (JobMain1 스타일로 변경 - 둥근 모서리) */
+.cd-search-wrapper {
+    width: 600px;
+    height: 60px;
+    margin: 0 auto 50px auto; /* 중앙 정렬 */
+    position: relative;
+}
+
 .cd-search-input {
     width: 100%;
-    height: 60px;
+    height: 100%;
     border: 1px solid #ddd;
     border-radius: 30px;
-    padding: 0 30px;
-    font-size: 18px;
+    padding: 0 50px 0 30px; /* 아이콘 공간 확보 */
+    font-size: 16px;
     outline: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    text-align: center;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
 }
+.cd-search-input:focus { border-color: #397EFF; }
 
-/* 그리드/카드 */
+/* 그리드 레이아웃 (JobMain1 규격 - 3열, 간격 25px) */
 .cd-grid {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    gap: 25px;
     margin-bottom: 60px;
 }
 
+/* 카드 스타일 (JobMain1 규격) */
 .cd-card {
     display: flex;
     flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
+.cd-card:hover { transform: translateY(-5px); }
 
-.cd-panel {
+/* 카드 내부 이미지 (16:10 비율) */
+.cd-card-img {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16/10;
     background-color: #d9d9d9;
     border-radius: 4px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-bottom: 12px;
+    object-fit: cover;
 }
 
-.search-icon-placeholder {
-    font-size: 40px;
-    color: #999;
-}
-
-.cd-info h3 {
-    font-size: 18px;
-    font-weight: bold;
+.cd-card-info h3 {
+    font-size: 16px;
+    font-weight: 700;
     margin: 0 0 5px 0;
     color: #333;
 }
-.cd-info p {
+.cd-card-info p {
     font-size: 14px;
     color: #666;
     margin: 0;
+    line-height: 1.4;
 }
 
-/* 하단 문구 */
+/* 하단 푸터 텍스트 */
 .cd-footer-text {
-    font-size: 14px;
-    color: #999;
-    margin-top: 20px;
+    font-size: 12px; color: #999; margin-top: 20px; text-align: center; width: 100%;
 }

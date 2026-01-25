@@ -1,192 +1,160 @@
-/* ... 기존 mypage-container, header 등 스타일 유지 ... */
+/* CompanyMyPage.css - 유저 마이페이지(UserMyPage)와 디자인 통일 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
 .mypage-container {
     width: 100%;
     min-height: 100vh;
     background-color: white;
     font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.mp-header { padding: 20px 40px; border-bottom: 1px solid #eee; }
-.mp-back-link { margin: 20px 40px; color: #666; cursor: pointer; }
 
+/* 1. 상단 네비게이션바 */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; transition: color 0.2s; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+.login-box-btn.active { border-color: #397EFF; background-color: #f0f7ff; }
+
+/* 2. 메인 컨텐츠 영역 */
 .mp-content {
-    max-width: 600px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 1000px; /* 유저 페이지와 동일한 너비 */
+    padding: 15px 20px 100px 20px; 
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-bottom: 100px;
-}
-.mp-profile-img-box {
-    width: 300px;
-    height: 200px;
-    background-color: #d9d9d9;
-    margin-bottom: 20px;
-}
-.mp-profile-info { text-align: center; margin-bottom: 30px; }
-.mp-profile-info h2 { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
-.mp-profile-info p { color: #666; font-size: 14px; }
-
-.mp-check-btn {
-    width: 100%;
-    height: 50px;
-    border: 1px solid #ddd;
-    background-color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 30px;
-    transition: all 0.2s;
-}
-.mp-check-btn:hover { background-color: #f5f5f5; }
-
-/* 폼 영역 */
-.mp-form-area {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    box-sizing: border-box;
 }
 
-/* --- [추가/수정] 태그 박스 스타일 --- */
-.tag-section {
-    position: relative; /* 추천 리스트 위치 기준 */
-    width: 100%;
+/* 돌아가기 링크 */
+.mp-back-link {
+    width: 100%; text-align: left; margin-bottom: 20px; cursor: pointer;
+    font-size: 14px; font-weight: 500; color: #666;
+}
+.mp-back-link:hover { color: #397EFF; text-decoration: underline; }
+
+/* 3. 타이틀 스타일 (유저 페이지 스타일 적용) */
+.mp-header-box {
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 30px; padding: 0 10px 15px 10px; position: relative; width: 100%;
+}
+.mp-header-box::after {
+    content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 3px; background-color: #D9D9D9;
+}
+.mp-title { font-weight: 700; font-size: 28px; color: #000000; margin: 0; }
+
+/* 4. 프로필 카드 디자인 (가로형) */
+.mp-profile-card {
+    width: 100%; background-color: #fff; border: 1px solid #eee;
+    border-radius: 12px; padding: 30px 40px; display: flex;
+    align-items: center; justify-content: flex-start; gap: 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); margin-bottom: 40px; box-sizing: border-box;
 }
 
-.tag-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #4285F4; /* 포인트 컬러 */
+.mp-profile-left { display: flex; justify-content: center; align-items: center; }
+
+.mp-profile-img {
+    width: 100px; height: 100px; border-radius: 50%; /* 유저처럼 원형 적용 */
+    background-color: #e0e0e0; overflow: hidden; flex-shrink: 0;
+    background-size: cover; background-position: center; cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
 }
 
+.mp-profile-info {
+    flex: 1; display: flex; flex-direction: column; gap: 12px; text-align: left;
+}
+
+.mp-info-row { display: flex; align-items: center; gap: 20px; font-size: 16px; }
+.mp-label { width: 80px; font-weight: 500; color: #777; flex-shrink: 0; }
+.mp-value { color: #333; font-weight: 500; }
+
+/* 버튼 스타일 */
+.mp-tag-add-btn {
+    padding: 8px 15px; background-color: #397EFF; color: white;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+    transition: background-color 0.2s; font-family: inherit; font-size: 15px;
+}
+.mp-tag-add-btn:hover { background-color: #2d65cc; }
+
+.mp-cancel-btn {
+    padding: 8px 15px; background-color: #eee; color: #333;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+
+/* 5. 하단 2단 그리드 섹션 */
+.mp-grid-sections {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%;
+}
+
+.mp-section {
+    padding: 20px; border: 1px solid #eee; border-radius: 12px;
+    background-color: #fcfcfc; min-height: 300px; position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.mp-section-title {
+    font-weight: 700; font-size: 20px; color: #333;
+    border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; display: block;
+}
+
+/* 태그 스타일 (유저 뱃지와 통일) */
+.mp-badge {
+    background-color: #f0f4ff; color: #1967d2; padding: 4px 10px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+}
+
+/* 태그 입력창 스타일 */
 .tag-input-container {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap; /* 태그가 많으면 줄바꿈 */
-    gap: 8px;
-    min-height: 50px;
-    background-color: white;
+    border: 1px solid #ddd; border-radius: 8px; padding: 10px;
+    display: flex; flex-wrap: wrap; gap: 8px; background-color: white;
 }
-
-.tag-input-container:focus-within {
-    border-color: #4285F4; /* 포커스 시 테두리 색 변경 */
-}
-
-/* 태그 칩 (캡슐 모양) */
+.tag-input-container:focus-within { border-color: #397EFF; }
 .tag-chip {
-    background-color: #e8f0fe;
-    color: #1967d2;
-    border-radius: 16px;
-    padding: 5px 12px;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    background-color: #e8f0fe; color: #1967d2; border-radius: 16px;
+    padding: 5px 12px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px;
 }
-
 .tag-remove-btn {
-    background: none;
-    border: none;
-    color: #1967d2;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
+    background: none; border: none; color: #1967d2; cursor: pointer; font-size: 16px;
 }
-
-/* 태그 입력 필드 (투명하게) */
 .tag-input-field {
-    border: none;
-    outline: none;
-    font-size: 15px;
-    flex: 1; /* 남은 공간 차지 */
-    min-width: 120px;
+    border: none; outline: none; font-size: 14px; flex: 1; min-width: 80px; font-family: inherit;
 }
-
-/* 추천 리스트 (드롭다운) */
 .suggestion-list {
-    position: absolute;
-    top: 100%; /* 입력창 바로 아래 */
-    left: 0;
-    width: 100%;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 100;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    background-color: white; border: 1px solid #ddd; border-top: none;
+    max-height: 150px; overflow-y: auto; list-style: none; padding: 0; margin: 0;
 }
+.suggestion-list li {
+    padding: 8px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f5f5f5;
+}
+.suggestion-list li:hover { background-color: #f0f4ff; }
 
-.suggestion-item, .suggestion-list li {
-    padding: 10px 15px;
-    font-size: 14px;
-    cursor: pointer;
-    border-bottom: 1px solid #f5f5f5;
+/* 리스트 아이템 (유저 페이지 스타일) */
+.ump-post-list { display: flex; flex-direction: column; gap: 8px; }
+.ump-post-row {
+    display: flex; justify-content: space-between; padding: 10px 5px;
+    border-bottom: 1px dashed #eee; cursor: pointer; transition: background-color 0.2s;
 }
+.ump-post-row:last-child { border-bottom: none; }
+.ump-post-row:hover { background-color: #f5f5f5; }
 
-.suggestion-list li:hover {
-    background-color: #f0f4ff;
-}
-/* --------------------------------- */
-
-.mp-textarea-intro {
-    width: 100%;
-    height: 200px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    font-size: 16px;
-    resize: none;
-}
-
-.mp-save-area {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.mp-save-btn {
-    width: 100px;
-    height: 40px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* 리스트 스타일 (기존 유지) */
-.mp-list-area {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.mp-post-item {
-    display: flex;
-    gap: 15px;
-    border: 1px solid #eee;
-    padding: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.mp-post-img { width: 100px; height: 70px; flex-shrink: 0; }
-.mp-post-img img, .gray-box-sm {
-    width: 100%; height: 100%; background-color: #d9d9d9;
-    object-fit: cover; border-radius: 4px;
-}
-.mp-post-text h3 { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
-.mp-post-text p { font-size: 14px; color: #555; }
-.no-posts-msg {
-    text-align: center; margin-top: 50px; font-size: 20px; font-weight: bold; color: #333;
-}
+.ump-post-title-text { font-size: 15px; color: #333; font-weight: 500; }
+.ump-post-date { font-size: 13px; color: #999; }
+.no-data-text { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }

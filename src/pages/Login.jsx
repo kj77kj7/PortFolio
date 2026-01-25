@@ -5,14 +5,28 @@ import '../styles/Login.css';
 const Login = () => {
   const navigate = useNavigate();
   
-  // 로그인 폼 상태
-  // 변수명은 email로 되어있지만, 실제로는 '아이디(username)'를 입력받습니다.
+  // [기능 1] 로그인 폼 상태 관리
+  // 변수명은 email이지만, 백엔드 DTO에 맞춰 username으로 전송됩니다.
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // 오른쪽 패널 상태 관리 ('default' | 'selection')
+  // [디자인 2] 오른쪽 패널 상태 관리 ('default': 환영 문구, 'selection': 회원 유형 선택)
   const [viewMode, setViewMode] = useState('default');
 
+  // [디자인 2] 마우스 움직임에 따른 플로팅 아이콘 애니메이션 로직
+  const handleMouseMove = (e) => {
+    const floaters = document.querySelectorAll('.floater-wrapper');
+    const x = (window.innerWidth - e.pageX) / 40;
+    const y = (window.innerHeight - e.pageY) / 40;
+
+    floaters.forEach((floater, index) => {
+        const speed = (index % 3 + 1) * 0.5; 
+        const direction = index % 2 === 0 ? 1 : -1;
+        floater.style.transform = `translate(${x * speed * direction}px, ${y * speed * direction}px)`;
+    });
+  };
+
+  // [기능 1] 로그인 처리 핸들러 (API 연동 및 세션 저장)
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -35,7 +49,7 @@ const Login = () => {
         // 로그인 성공 시: 유저 정보를 받아서 브라우저(세션)에 저장
         const data = await response.json();
         
-        // sessionStorage에 저장해야 Home.jsx에서 로그인 상태를 인식합니다.
+        // sessionStorage에 저장해야 Home.jsx 등에서 로그인 상태를 인식합니다.
         sessionStorage.setItem('user', JSON.stringify(data));
         
         alert(`${data.name}님 환영합니다!`);
@@ -55,25 +69,30 @@ const Login = () => {
     <div className="login-page-wrapper">
       <div className="login-card">
         
-        {/* --- 왼쪽 패널 (흰색): 로그인 폼 --- */}
+        {/* --- [디자인 2] 왼쪽 패널: 로그인 폼 --- */}
         <div className="left-panel">
           <div className="header-section">
-            <h1 className="brand-title">커리어친구들</h1>
-            <div className="header-line"></div>
+            <img 
+                src="img/logo.png" 
+                alt="커리어친구들" 
+                className="login-logo-img"
+                onClick={() => navigate('/')}
+                onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} 
+            />
           </div>
           
           <form className="login-form" onSubmit={handleLogin}>
             <div className="input-group">
               <input 
                 type="text" 
-                className="styled-input" 
+                className="glass-input" 
                 placeholder="아이디" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input 
                 type="password" 
-                className="styled-input" 
+                className="glass-input" 
                 placeholder="비밀번호" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -90,51 +109,64 @@ const Login = () => {
           </form>
         </div>
 
-        {/* --- 오른쪽 패널 (회색): 동적 콘텐츠 --- */}
-        <div className="right-panel">
+        {/* --- [디자인 2] 오른쪽 패널: 인터랙션 및 회원가입 유도 --- */}
+        <div className="right-panel" onMouseMove={handleMouseMove}>
           
-          {/* 홈 아이콘 */}
-          <div className="home-icon-container" onClick={() => {
-              setViewMode('default');
-              navigate('/');
-          }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="#555" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
+          <div className="home-text-btn" onClick={() => navigate('/')}>
+             &lt; 홈으로 가기
           </div>
 
-          {/* viewMode에 따른 조건부 렌더링 */}
-          {viewMode === 'default' ? (
-            <>
-              {/* [기본 상태] 비디오 영역 + 회원가입 버튼 */}
-              <div className="video-area">
-                {/* 추후 영상을 넣을 공간 */}
-              </div>
+          {/* 배경에 떠다니는 아이콘들 */}
+          <div className="floating-elements">
+              <div className="floater-wrapper f1"><span>📚</span></div>
+              <div className="floater-wrapper f2"><span>🎓</span></div>
+              <div className="floater-wrapper f3"><span>💡</span></div>
+              <div className="floater-wrapper f4"><span>✏️</span></div>
+              <div className="floater-wrapper f5"><span>🔍</span></div>
+              <div className="floater-wrapper f6"><span>🚀</span></div>
+          </div>
 
-              <div className="signup-btn-wrapper">
-                <button className="signup-btn" onClick={() => setViewMode('selection')}>
-                  회원가입
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* [선택 상태] 유저 vs 기업 선택 */}
-              <div className="selection-container">
-                <h2 className="selection-title">어떤 타이틀로 이용하실건가요?</h2>
-                
-                <div className="selection-buttons">
-                  <button className="type-select-btn" onClick={() => navigate('/signup')}>
-                    유저
-                  </button>
-                  <div className="divider-line"></div>
-                  <button className="type-select-btn" onClick={() => navigate('/company-signup')}>
-                    기업
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+          {/* viewMode 상태에 따라 내용 변경 (기본 환영 문구 <-> 회원 유형 선택) */}
+          <div className="right-panel-content">
+              
+              {viewMode === 'default' ? (
+                /* [기본 상태] */
+                <>
+                    <h2 className="welcome-text">아직 회원이 아니신가요?</h2>
+                    <p className="welcome-sub-text">
+                        간단한 가입으로<br/>
+                        커리어친구들과 함께 성장하세요!
+                    </p>
+                    {/* 버튼 클릭 시 'selection' 모드로 변경 */}
+                    <button className="ghost-signup-btn" onClick={() => setViewMode('selection')}>
+                        회원가입 하러 가기
+                    </button>
+                </>
+              ) : (
+                /* [선택 상태] 개인 vs 기업 */
+                <>
+                    <h2 className="welcome-text">가입 유형을 선택해주세요</h2>
+                    <p className="welcome-sub-text">
+                        어떤 목적으로 이용하시나요?
+                    </p>
+                    
+                    <div className="selection-btn-group">
+                        <button className="ghost-signup-btn select-btn" onClick={() => navigate('/signup')}>
+                            개인 회원
+                        </button>
+                        <button className="ghost-signup-btn select-btn" onClick={() => navigate('/company-signup')}>
+                            기업
+                        </button>
+                    </div>
+
+                    {/* 취소 버튼 (다시 default 모드로) */}
+                    <div className="cancel-text-btn" onClick={() => setViewMode('default')}>
+                        취소하고 돌아가기
+                    </div>
+                </>
+              )}
+
+          </div>
 
         </div>
 

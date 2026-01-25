@@ -5,32 +5,28 @@ import '../styles/CompanyList.css';
 const CompanyList = () => {
   const navigate = useNavigate();
   
+  // [기능 1] 상태 관리 (Auth, Data, Search)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
 
-  // 데이터 상태
   const [allCompanies, setAllCompanies] = useState([]);      
   const [displayCompanies, setDisplayCompanies] = useState([]); 
 
-  // 검색 상태
-  const [searchTags, setSearchTags] = useState([]); // #태그 배열
-  const [inputValue, setInputValue] = useState(''); // 검색어
+  const [searchTags, setSearchTags] = useState([]); 
+  const [inputValue, setInputValue] = useState(''); 
 
-  const [hoveredCompany, setHoveredCompany] = useState(null);
-
+  // [기능 1] 초기 데이터 로드 및 로그인 체크
   useEffect(() => {
-    // 1. 로그인 체크
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
         setIsLoggedIn(true);
         setUserName(user.name);
     }
 
-    // 2. 회사 목록 Fetch
     fetch('http://localhost:8080/api/users/companies')
       .then(res => res.json())
       .then(data => {
-        // 최신순 정렬
+        // [기능 1] 최신순 정렬
         const sorted = data.sort((a, b) => b.id - a.id);
         setAllCompanies(sorted);
         setDisplayCompanies(sorted);
@@ -38,18 +34,18 @@ const CompanyList = () => {
       .catch(err => console.error(err));
   }, []);
 
-  // 필터링 로직
+  // [기능 1] 필터링 로직 (태그 AND 조건 + 텍스트 검색)
   useEffect(() => {
     let filtered = allCompanies;
 
-    // 1. 태그(#) 조건 (AND 조건)
+    // 1. 태그(#) 조건 (AND 조건: 모든 태그를 포함해야 함)
     if (searchTags.length > 0) {
         filtered = filtered.filter(comp => 
             searchTags.every(tag => comp.tags && comp.tags.includes(tag))
         );
     }
 
-    // 2. 텍스트 검색
+    // 2. 텍스트 검색 (이름, 주소, 태그 문자열 포함 여부)
     if (inputValue.trim()) {
         const keyword = inputValue.trim();
         filtered = filtered.filter(comp => 
@@ -62,13 +58,14 @@ const CompanyList = () => {
     setDisplayCompanies(filtered);
   }, [searchTags, inputValue, allCompanies]);
 
+  // [기능 1] 로그아웃 핸들러
   const handleLogout = () => {
     sessionStorage.removeItem('user');
     setIsLoggedIn(false);
     navigate('/');
   };
 
-  // 엔터 키 핸들러 (태그 생성)
+  // [기능 1] 엔터 키 핸들러 (태그 생성)
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -85,74 +82,91 @@ const CompanyList = () => {
     }
   };
 
+  // [기능 1] 태그 삭제 핸들러
   const removeTag = (tagToRemove) => {
     setSearchTags(searchTags.filter(tag => tag !== tagToRemove));
   };
 
   return (
     <div className="cl-container">
-      {/* [수정] 헤더 통일: 높이, 패딩, 간격(50px)을 다른 페이지와 똑같이 맞춤 */}
-      <header className="navbar" style={{height:'80px', padding:'0 50px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #eee', backgroundColor:'white'}}>
-        <div className="logo-area">
-          <h1 className="nav-logo" onClick={() => navigate('/')} style={{color:'#2E7D32', fontSize:'26px', fontWeight:'bold', cursor:'pointer', margin:0}}>
-            커리어친구들
-          </h1>
+      {/* [디자인 2] 헤더 적용 */}
+      <header className="navbar">
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img 
+                src="img/logo.png" 
+                alt="커리어친구들" 
+                className="nav-logo-img"
+                onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} 
+            />
         </div>
         
-        {/* [수정] 네비게이션 간격 50px, 회사정보 색상 초록색(#2E7D32) 적용 */}
-        <nav className="nav-links" style={{display:'flex', gap:'50px', fontSize:'18px', fontWeight:'bold'}}>
-          <span onClick={() => navigate('/jobs')} style={{color:'#333', cursor:'pointer'}}>구인구직</span>
-          <span onClick={() => navigate('/companies')} style={{color:'#2E7D32', cursor:'pointer'}}>회사정보</span>
-          <span onClick={() => navigate('/community')} style={{color:'#333', cursor:'pointer'}}>커뮤니티</span>
+        <nav className="nav-links">
+          <button className="nav-text-link" onClick={() => navigate('/jobs')}>구인구직</button>
+          <button className="nav-text-link active" style={{color:'#397EFF'}} onClick={() => navigate('/companies')}>회사정보</button>
+          <button className="nav-text-link" onClick={() => navigate('/community')}>커뮤니티</button>
         </nav>
-        
-        <div className="auth-btn-area">
+
+        <div className="auth-area">
           {isLoggedIn ? (
-             <>
-               <button className="nav-btn" onClick={() => navigate('/mypage')} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer', marginRight:'10px'}}>
-                 마이페이지 ({userName})
-               </button>
-               <button className="nav-btn logout-btn" onClick={handleLogout} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}>
-                 로그아웃
-               </button>
-             </>
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn" onClick={() => navigate('/mypage')}>
+                  {userName}님
+                </button>
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>
+                  로그아웃
+                </button>
+             </div>
           ) : (
-             <button className="nav-btn" onClick={() => navigate('/login')} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}>
+             <button className="login-box-btn" onClick={() => navigate('/login')}>
                회원가입 / 로그인
              </button>
           )}
         </div>
       </header>
 
-      {/* 메인 컨텐츠 */}
+      {/* [디자인 2] 메인 컨텐츠 구조 */}
       <main className="cl-content">
+        
+        {/* 타이틀 영역 */}
         <div className="cl-header-box">
             <h1 className="cl-title">회사정보</h1>
-            <div className="cl-underline"></div>
         </div>
 
-        {/* 검색 컨테이너 */}
+        {/* 검색 컨테이너 (태그 + 인풋) */}
         <div className="cl-search-container">
             <div className="cl-tag-box">
+                {/* 선택된 태그 표시 */}
                 {searchTags.map((tag, idx) => (
                     <div key={idx} className="cl-search-chip">
                         <span>{tag}</span>
                         <button onClick={() => removeTag(tag)}>×</button>
                     </div>
                 ))}
+
+                {/* [디자인 2] onFocus/onBlur 플레이스홀더 효과 적용 */}
                 <input 
                     type="text" 
                     className="cl-tag-input"
                     placeholder="기업명, 지역 또는 #태그 입력"
+                    onFocus={(e) => e.target.placeholder = ''} 
+                    onBlur={(e) => e.target.placeholder = '기업명, 지역 또는 #태그 입력'}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
             </div>
-            <button className="cl-search-btn">🔍</button>
+            
+            <button className="cl-search-btn">
+                <img 
+                    src="img/search.png" 
+                    alt="검색" 
+                    className="search-icon-img"
+                    onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='🔍';}}
+                />
+            </button>
         </div>
 
-        {/* 회사 그리드 */}
+        {/* 회사 목록 그리드 */}
         <div className="cl-grid">
             {displayCompanies.length > 0 ? (
                 displayCompanies.map(comp => (
@@ -160,13 +174,17 @@ const CompanyList = () => {
                         key={comp.id} 
                         className="cl-card"
                         onClick={() => navigate(`/company-detail/${comp.id}`)}
-                        onMouseEnter={() => setHoveredCompany(comp)}
-                        onMouseLeave={() => setHoveredCompany(null)}
                     >
-                        {/* 로고 이미지가 있다면 배경으로, 없으면 회색 */}
-                        <div className="cl-card-img" style={comp.profileImage ? {backgroundImage:`url(${comp.profileImage})`, backgroundSize:'cover'} : {}}></div>
-                        <h3 className="cl-card-name">[ {comp.name} ]</h3>
-                        <p className="cl-card-addr">{comp.address}</p>
+                        {/* [기능 1 + 디자인 2] 데이터가 있으면 배경 이미지로 설정 */}
+                        <div 
+                            className="cl-card-img" 
+                            style={comp.profileImage ? {backgroundImage:`url(${comp.profileImage})`, backgroundSize:'cover'} : {}}
+                        ></div>
+                        
+                        <div className="cl-info">
+                            <h3 className="cl-card-name">[ {comp.name} ]</h3>
+                            <p className="cl-card-addr">{comp.address}</p>
+                        </div>
                     </div>
                 ))
             ) : (
@@ -181,23 +199,6 @@ const CompanyList = () => {
             커리어 친구들에 등록된 회사의 정보만 나타날 수 있습니다.
         </div>
       </main>
-
-      {/* 팝업 */}
-      {hoveredCompany && (
-        <div className="cl-popup-overlay">
-            <div className="cl-popup-box">
-                <div className="cl-popup-img" style={hoveredCompany.profileImage ? {backgroundImage:`url(${hoveredCompany.profileImage})`, backgroundSize:'cover'} : {}}></div>
-                <h2 className="cl-popup-name">[ {hoveredCompany.name} ]</h2>
-                <p className="cl-popup-addr">{hoveredCompany.address}</p>
-                <div className="cl-popup-tags">
-                    {hoveredCompany.tags ? hoveredCompany.tags : '#태그정보없음'}
-                </div>
-                <div className="cl-popup-intro">
-                    {hoveredCompany.career ? hoveredCompany.career : '회사 소개가 없습니다.'}
-                </div>
-            </div>
-        </div>
-      )}
     </div>
   );
 };

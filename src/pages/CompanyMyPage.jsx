@@ -21,19 +21,16 @@ const SAMPLE_TAGS = [
 
 const CompanyMyPage = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null); // [추가] 파일 입력 참조
+  const fileInputRef = useRef(null); 
   const [user, setUser] = useState(null);
   
+  // 상태 관리
   const [viewMode, setViewMode] = useState('list'); 
   const [myPosts, setMyPosts] = useState([]);
-
-  // 상태 관리
   const [tags, setTags] = useState([]);         
   const [tagInput, setTagInput] = useState(''); 
   const [suggestions, setSuggestions] = useState([]); 
   const [intro, setIntro] = useState('');
-  
-  // [추가] 프로필 이미지 상태
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
@@ -48,16 +45,13 @@ const CompanyMyPage = () => {
       .then(res => res.json())
       .then(data => {
         setUser(data);
-        
         if (data.tags && data.tags.trim() !== '') {
             setTags(data.tags.split(' ')); 
         } else {
             setTags([]);
         }
-        
         setIntro(data.career || ''); 
-        setProfileImage(data.profileImage); // 이미지 로드
-
+        setProfileImage(data.profileImage); 
         fetchMyPosts(data.id);
       })
       .catch(err => console.error(err));
@@ -74,7 +68,6 @@ const CompanyMyPage = () => {
       .catch(err => console.error(err));
   };
 
-  // [추가] 이미지 업로드 핸들러
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -86,31 +79,20 @@ const CompanyMyPage = () => {
     }
   };
 
-  // 태그 로직
+  // 태그 및 정보 저장 로직
   const handleTagInputChange = (e) => {
     const value = e.target.value;
     setTagInput(value);
-
-    if (value.trim() === '') {
-        setSuggestions([]);
-        return;
-    }
+    if (value.trim() === '') { setSuggestions([]); return; }
     const searchKeyword = value.startsWith('#') ? value : value;
-    const filtered = SAMPLE_TAGS.filter(tag => 
-        tag.includes(searchKeyword) && !tags.includes(tag)
-    );
+    const filtered = SAMPLE_TAGS.filter(tag => tag.includes(searchKeyword) && !tags.includes(tag));
     setSuggestions(filtered);
   };
 
   const addTag = (tagToAdd) => {
-    if (tags.includes(tagToAdd)) {
-        setTagInput('');
-        setSuggestions([]);
-        return;
-    }
+    if (tags.includes(tagToAdd)) { setTagInput(''); setSuggestions([]); return; }
     setTags([...tags, tagToAdd]);
-    setTagInput('');
-    setSuggestions([]);
+    setTagInput(''); setSuggestions([]);
   };
 
   const handleKeyDown = (e) => {
@@ -129,24 +111,13 @@ const CompanyMyPage = () => {
   
   const handleSave = () => {
     if (!user) return;
-
-    // [수정] 필수 이미지 검사 (최소 1장)
-    if (!profileImage) {
-        alert("회사 정보 등록 시, 대표 사진 1장은 필수입니다.");
-        return;
-    }
-
+    if (!profileImage) { alert("회사 정보 등록 시, 대표 사진 1장은 필수입니다."); return; }
     const tagsString = tags.join(' ');
 
-    // [수정] 이미지(profileImage)도 함께 전송
     fetch(`http://localhost:8080/api/users/${user.id}/info`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-          tags: tagsString, 
-          intro: intro,
-          profileImage: profileImage 
-      })
+      body: JSON.stringify({ tags: tagsString, intro: intro, profileImage: profileImage })
     })
     .then(res => {
         if(res.ok) return res.json();
@@ -154,154 +125,181 @@ const CompanyMyPage = () => {
     })
     .then(updatedUser => {
         alert("저장되었습니다.");
-        // 세션 정보 갱신
-        sessionStorage.setItem('user', JSON.stringify({ 
-            ...user, 
-            tags: updatedUser.tags, 
-            career: updatedUser.career,
-            profileImage: updatedUser.profileImage
-        }));
+        sessionStorage.setItem('user', JSON.stringify({ ...user, tags: updatedUser.tags, career: updatedUser.career, profileImage: updatedUser.profileImage }));
         setUser(updatedUser);
+        setViewMode('list'); // 저장 후 리스트 모드로 복귀
     })
     .catch(err => alert(err.message));
   };
 
-  const getThumbnail = (jsonImages) => {
-    try {
-        const parsed = JSON.parse(jsonImages);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
-    } catch { return null; }
+  const handleLogout = () => {
+      sessionStorage.removeItem('user');
+      navigate('/');
   };
 
   if (!user) return <div>Loading...</div>;
 
   return (
     <div className="mypage-container">
-      <header className="mp-header">
-         <h1 className="logo-text" onClick={() => navigate('/')} style={{cursor:'pointer'}}>커리어친구들</h1>
+      {/* 상단 네비게이션 */}
+      <header className="navbar">
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img src="/img/logo.png" alt="커리어친구들" className="nav-logo-img" onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} />
+        </div>
+        <nav className="nav-links">
+          <button className="nav-text-link" onClick={() => navigate('/jobs')}>구인구직</button>
+          <button className="nav-text-link" onClick={() => navigate('/companies')}>회사정보</button>
+          <button className="nav-text-link" onClick={() => navigate('/community')}>커뮤니티</button>
+        </nav>
+        <div className="auth-area">
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn active" onClick={() => navigate('/mypage')}>{user.name}님</button>
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>로그아웃</button>
+             </div>
+        </div>
       </header>
       
-      <div className="mp-back-link" onClick={() => navigate('/')}>
-         ← 취소하고 돌아가기
-      </div>
-
       <div className="mp-content">
-        
-        {/* 프로필 이미지 표시 영역 */}
-        <div 
-            className="mp-profile-img-box" 
-            style={profileImage ? {backgroundImage: `url(${profileImage})`, backgroundSize:'cover'} : {display:'flex', justifyContent:'center', alignItems:'center', cursor: viewMode === 'form' ? 'pointer' : 'default'}}
-            onClick={() => viewMode === 'form' && fileInputRef.current.click()}
-        >
-            {/* 수정 모드일 때만 안내 메시지 표시 */}
-            {viewMode === 'form' && !profileImage && <span style={{color:'#666'}}>+ 대표 사진 등록 (필수)</span>}
-            
-            {/* 파일 입력 (숨김) */}
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                style={{display:'none'}} 
-                accept="image/*"
-                onChange={handleImageChange}
-            />
+        {/* 돌아가기 링크 */}
+        <div className="mp-back-link" onClick={() => navigate(-1)}>← 취소하고 돌아가기</div>
+
+        {/* [디자인 변경] 마이페이지 헤더 영역 */}
+        <div className="mp-header-box">
+             <h1 className="mp-title">마이페이지</h1>
         </div>
 
-        <div className="mp-profile-info">
-            <h2>[ {user.name} ]</h2>
-            <p>{user.address}</p>
-        </div>
+        {/* [디자인 변경] 1. 프로필 카드 (유저 페이지 스타일 적용) */}
+        <div className="mp-profile-card">
+            {/* 왼쪽: 이미지 */}
+            <div className="mp-profile-left">
+                <div 
+                    className="mp-profile-img" 
+                    style={profileImage ? {backgroundImage: `url(${profileImage})`} : {backgroundColor:'#e0e0e0'}}
+                    onClick={() => viewMode === 'form' && fileInputRef.current.click()}
+                >
+                    {/* 이미지 없을 때 + 표시 (수정모드) */}
+                    {viewMode === 'form' && !profileImage && <span style={{fontSize:'30px', color:'#999'}}>+</span>}
+                    
+                    {/* 실제 이미지 렌더링 (배경이미지 방식 or img 태그 방식) */}
+                    {profileImage && <img src={profileImage} alt="Profile" style={{width:'100%', height:'100%', objectFit:'cover'}} />}
 
-        <button 
-            className="mp-check-btn" 
-            onClick={viewMode === 'form' ? () => fetchMyPosts(user.id) : () => setViewMode('form')}
-        >
-            {viewMode === 'form' ? '내가 쓴 글 확인' : '정보 수정하기'}
-        </button>
+                    <input type="file" ref={fileInputRef} style={{display:'none'}} accept="image/*" onChange={handleImageChange}/>
+                </div>
+            </div>
 
-        {viewMode === 'form' ? (
-            <div className="mp-form-area">
-                <div className="tag-section">
-                    <label className="tag-label">우리 회사의 키워드는? (자동완성 지원)</label>
-                    <div className="tag-input-container">
-                        {tags.map((tag, index) => (
-                            <div key={index} className="tag-chip">
-                                <span>{tag}</span>
-                                <button className="tag-remove-btn" onClick={() => removeTag(tag)}>×</button>
-                            </div>
-                        ))}
-                        <input 
-                            type="text" 
-                            className="tag-input-field"
-                            placeholder="태그 입력 후 Enter"
-                            value={tagInput}
-                            onChange={handleTagInputChange}
-                            onKeyDown={handleKeyDown}
-                        />
-                    </div>
-                    {suggestions.length > 0 && (
-                        <ul className="suggestion-list">
-                            {suggestions.map((suggestion, idx) => (
-                                <li key={idx} onClick={() => addTag(suggestion)}>
-                                    {suggestion}
-                                </li>
-                            ))}
-                        </ul>
+            {/* 오른쪽: 정보 */}
+            <div className="mp-profile-info">
+                <div className="mp-info-row">
+                    <span className="mp-label">기업명</span>
+                    <span className="mp-value" style={{fontWeight:'bold', fontSize:'18px'}}>{user.name}</span>
+                </div>
+                <div className="mp-info-row">
+                    <span className="mp-label">주소</span>
+                    <span className="mp-value" style={{fontSize:'14px'}}>{user.address}</span>
+                </div>
+                <div className="mp-info-row">
+                    <span className="mp-label">사업자번호</span>
+                    <span className="mp-value">{user.businessNumber}</span>
+                </div>
+                
+                {/* 정보 수정 버튼 */}
+                <div className="mp-info-row" style={{marginTop:'15px'}}>
+                    <button 
+                        className="mp-tag-add-btn" 
+                        onClick={viewMode === 'form' ? handleSave : () => setViewMode('form')}
+                        style={{width:'150px'}} 
+                    >
+                        {viewMode === 'form' ? '저장하기' : '정보 수정하기'}
+                    </button>
+                    {viewMode === 'form' && (
+                        <button className="mp-cancel-btn" onClick={() => setViewMode('list')} style={{marginLeft:'10px'}}>취소</button>
                     )}
                 </div>
-
-                <textarea 
-                    className="mp-textarea-intro"
-                    placeholder="회사에 대한 간단한 소개를 작성해주세요."
-                    value={intro}
-                    onChange={(e) => setIntro(e.target.value)}
-                ></textarea>
-
-                <div className="mp-save-area">
-                    <button className="mp-save-btn" onClick={handleSave}>저장</button>
-                </div>
             </div>
-        ) : (
-            <div className="mp-list-area">
-                {myPosts.length === 0 ? (
-                    <div className="no-posts-msg">아직 작성한 글이 없습니다.</div>
+        </div>
+
+        {/* [디자인 변경] 2. 하단 2단 그리드 섹션 */}
+        <div className="mp-grid-sections">
+            
+            {/* 왼쪽: 기업 키워드 (태그 관리) */}
+            <section className="mp-section">
+                <h3 className="mp-section-title">우리 기업 키워드 ({tags.length})</h3>
+                
+                {viewMode === 'form' ? (
+                    // 수정 모드일 때 태그 입력창
+                    <div className="tag-input-wrapper">
+                        <div className="tag-input-container">
+                            {tags.map((tag, index) => (
+                                <div key={index} className="tag-chip">
+                                    <span>{tag}</span>
+                                    <button className="tag-remove-btn" onClick={() => removeTag(tag)}>×</button>
+                                </div>
+                            ))}
+                            <input 
+                                type="text" className="tag-input-field" placeholder="태그 입력"
+                                value={tagInput} onChange={handleTagInputChange} onKeyDown={handleKeyDown}
+                            />
+                        </div>
+                        {suggestions.length > 0 && (
+                            <ul className="suggestion-list">
+                                {suggestions.map((suggestion, idx) => (
+                                    <li key={idx} onClick={() => addTag(suggestion)}>{suggestion}</li>
+                                ))}
+                            </ul>
+                        )}
+                        <p style={{fontSize:'12px', color:'#999', marginTop:'10px'}}>
+                            * 수정 모드에서 태그를 추가/삭제하고 상단 '저장하기'를 눌러주세요.
+                        </p>
+                    </div>
                 ) : (
-                    myPosts.map(post => {
-                        const thumb = getThumbnail(post.jobImages);
-                        return (
-                            <div key={post.id} className="mp-post-item" onClick={() => navigate(`/job-detail/${post.id}`)}>
-                                <div className="mp-post-img">
-                                    {thumb ? <img src={thumb} alt="post" /> : <div className="gray-box-sm"></div>}
-                                </div>
-                                <div className="mp-post-text" style={{flex:1}}>
-                                    <h3>{post.title}</h3>
-                                    <p>{post.companyName}</p>
-                                    <span>{post.startDate} ~ {post.endDate}</span>
-                                </div>
-                                <div style={{display:'flex', alignItems:'center', marginLeft:'10px'}}>
-                                    <button 
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            navigate(`/job-detail/${post.id}`, { state: { mode: 'edit' } });
-                                        }}
-                                        style={{
-                                            padding:'8px 16px',
-                                            backgroundColor:'#f0f0f0',
-                                            border:'1px solid #ccc',
-                                            borderRadius:'4px',
-                                            cursor:'pointer',
-                                            fontWeight:'bold',
-                                            fontSize: '14px'
-                                        }}
-                                    >
-                                        수정
-                                    </button>
-                                </div>
+                    // 조회 모드일 때 태그 리스트
+                    <div className="tag-display-area">
+                        {tags.length > 0 ? (
+                            <div style={{display:'flex', flexWrap:'wrap', gap:'8px'}}>
+                                {tags.map((tag, idx) => (
+                                    <span key={idx} className="mp-badge" style={{margin:0}}>{tag}</span>
+                                ))}
                             </div>
-                        );
-                    })
+                        ) : (
+                            <div className="no-data-text">등록된 키워드가 없습니다.</div>
+                        )}
+                    </div>
                 )}
-            </div>
-        )}
+            </section>
+
+            {/* 오른쪽: 진행중인 공고 (리스트 형태) */}
+            <section className="mp-section">
+                <h3 className="mp-section-title">진행중인 공고 ({myPosts.length})</h3>
+                <div className="ump-post-list">
+                    {myPosts.length > 0 ? (
+                        myPosts.map((post) => (
+                            <div 
+                                key={post.id} 
+                                className="ump-post-row"
+                                onClick={() => navigate(`/job-detail/${post.id}`)}
+                            >
+                                <span className="ump-post-title-text" style={{flex:1}}>
+                                    {post.title}
+                                </span>
+                                <span className="ump-post-date">
+                                    {post.endDate} 마감
+                                </span>
+                                {/* 수정 버튼 (작게) */}
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); navigate(`/job-detail/${post.id}`, { state: { mode: 'edit' } }); }}
+                                    style={{marginLeft:'10px', fontSize:'12px', padding:'2px 8px', border:'1px solid #ddd', borderRadius:'4px', background:'white', cursor:'pointer'}}
+                                >
+                                    수정
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="no-data-text no-data-box">등록된 공고가 없습니다.<br/><span style={{fontSize:'12px', fontWeight:'normal'}}>'구인구직 &gt; 글 작성' 메뉴를 이용해주세요.</span></div>
+                    )}
+                </div>
+            </section>
+        </div>
+
       </div>
     </div>
   );

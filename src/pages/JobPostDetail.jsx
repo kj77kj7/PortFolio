@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import '../styles/JobPostDetail.css';
 
-// 태그 자동완성을 위한 샘플 데이터
+// [데이터] JobCreate와 동일한 경력 옵션
+const CAREER_OPTIONS = ["신입", "1년 ~ 3년차", "3 ~ 5년차", "5년차 이상"];
+
+// [데이터] 태그 자동완성용 샘플
 const SAMPLE_TAGS = [
   "#재택근무", "#유연근무제", "#주4.5일제", "#탄력근무제", 
   "#자율출퇴근", "#칼퇴보장", "#야근없음", "#워라밸실천",
@@ -24,51 +27,49 @@ const JobPostDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const fileInputRef = useRef(null);
   
-  // 공고 데이터
+  // --- 상태 관리 ---
   const [jobData, setJobData] = useState(null);
-  
-  // 수정 모드 관련 상태
   const [isEditing, setIsEditing] = useState(false);
+  
+  // 수정 폼 데이터
   const [editForm, setEditForm] = useState({
       title: '',
       startDate: '',
       endDate: '',
-      totalCareer: '',
       content: ''
   });
 
-  // 태그 관련 상태
+  const [images, setImages] = useState([]);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [selectedCareers, setSelectedCareers] = useState([]);
+
+  // 태그 상태
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  // 유저 및 권한 상태
+  // 유저/지원자 관리 상태
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  // 구직자용 상태
+  const [userName, setUserName] = useState('');
   const [resumes, setResumes] = useState([]);
   const [hasApplied, setHasApplied] = useState(false);
-  
-  // 기업용 상태
   const [applicants, setApplicants] = useState([]);
-  
-  // [추가] 이력서 미리보기 모달 상태
   const [selectedResume, setSelectedResume] = useState(null);
-  
-  // 공통 상태
   const [applicantCount, setApplicantCount] = useState(0);
 
-  // 1. 초기 데이터 로드
+  // --- 초기 데이터 로드 ---
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem('user'));
     if (storedUser) {
       setUser(storedUser);
       setIsLoggedIn(true);
+      setUserName(storedUser.name);
     }
 
-    // 공고 상세 정보
+    // 공고 상세 정보 Fetch
     fetch(`http://localhost:8080/api/jobs/${id}`)
       .then(res => {
           if(!res.ok) throw new Error("공고 조회 실패");
@@ -81,7 +82,6 @@ const JobPostDetail = () => {
               title: data.title,
               startDate: data.startDate,
               endDate: data.endDate,
-              totalCareer: data.totalCareer,
               content: data.content || ''
           });
 
@@ -89,6 +89,21 @@ const JobPostDetail = () => {
               setTags(data.tags.split(' '));
           } else {
               setTags([]);
+          }
+
+          try {
+             if (data.jobImages) {
+                 const parsedImgs = JSON.parse(data.jobImages);
+                 if (Array.isArray(parsedImgs)) setImages(parsedImgs);
+             }
+          } catch(e) { 
+              console.error("이미지 파싱 오류", e);
+              setImages([]); 
+          }
+
+          if (data.totalCareer) {
+             const careers = data.totalCareer.split(', ').map(c => c.trim());
+             setSelectedCareers(careers);
           }
 
           if (location.state && location.state.mode === 'edit') {
@@ -107,26 +122,18 @@ const JobPostDetail = () => {
       .catch(err => console.error(err));
 
     fetch(`http://localhost:8080/api/applications/count/${id}`)
-        .then(res => res.json())
-        .then(count => setApplicantCount(count))
-        .catch(err => console.error(err));
+        .then(res => res.json()).then(count => setApplicantCount(count)).catch(console.error);
 
     if (storedUser && storedUser.role === 'JOB_SEEKER') {
         fetch(`http://localhost:8080/api/applications/check?jobPostId=${id}&userId=${storedUser.id}`)
-            .then(res => res.json())
-            .then(applied => setHasApplied(applied))
-            .catch(err => console.error(err));
+            .then(res => res.json()).then(applied => setHasApplied(applied)).catch(console.error);
     }
-
   }, [id, location.state]);
 
-  // 2. 기업 회원일 때 지원자 목록 로드
   useEffect(() => {
       if (user && jobData && user.role === 'COMPANY') {
           fetch(`http://localhost:8080/api/applications/job/${id}`)
-              .then(res => res.json())
-              .then(data => setApplicants(data))
-              .catch(err => console.error(err));
+              .then(res => res.json()).then(data => setApplicants(data)).catch(console.error);
       }
   }, [user, jobData, id]);
 
@@ -136,58 +143,70 @@ const JobPostDetail = () => {
     navigate('/');
   };
 
-  // --- 수정 관련 핸들러 ---
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDeleteCurrentImage = (e) => {
+      e.stopPropagation();
+      if (images.length === 0) return;
+      if (!window.confirm("현재 사진을 삭제하시겠습니까?")) return;
+
+      const newImages = images.filter((_, idx) => idx !== imageIndex);
+      setImages(newImages);
+      
+      if (imageIndex >= newImages.length) {
+          setImageIndex(Math.max(0, newImages.length - 1));
+      }
+  };
+
+  const nextImage = () => {
+    if (images.length === 0) return;
+    setImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    if (images.length === 0) return;
+    setImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const getVisibleImages = () => {
+      if (images.length === 0) return [];
+      const first = images[imageIndex];
+      const second = images.length > 1 ? images[(imageIndex + 1) % images.length] : null;
+      return [first, second];
+  };
+
+  const toggleCareer = (option) => {
+    if (selectedCareers.includes(option)) setSelectedCareers(selectedCareers.filter(c => c !== option));
+    else setSelectedCareers([...selectedCareers, option]);
+  };
+
   const handleEditChange = (e) => {
       const { name, value } = e.target;
       setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleTagInputChange = (e) => {
-    const value = e.target.value;
-    setTagInput(value);
-
-    if (value.trim() === '') {
-        setSuggestions([]);
-        return;
-    }
-
-    const searchKeyword = value.startsWith('#') ? value : value;
-    const filtered = SAMPLE_TAGS.filter(tag => 
-        tag.includes(searchKeyword) && !tags.includes(tag)
-    );
-    setSuggestions(filtered);
-  };
-
-  const addTag = (tagToAdd) => {
-    if (tags.includes(tagToAdd)) {
-        setTagInput('');
-        setSuggestions([]);
-        return;
-    }
-    setTags([...tags, tagToAdd]);
-    setTagInput('');
-    setSuggestions([]);
-  };
-
-  const handleTagKeyDown = (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault(); 
-        const val = tagInput.trim();
-        if (!val) return;
-        const newTag = val.startsWith('#') ? val : `#${val}`;
-        addTag(newTag);
-    }
-  };
-
-  const removeTag = (tagToRemove) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
-
   const handleUpdate = () => {
-      if (!window.confirm("수정하시겠습니까?")) return;
+      if (!editForm.title || !editForm.startDate || !editForm.endDate || !editForm.content) {
+          alert("모든 필수 항목을 입력해주세요."); return;
+      }
+      if (images.length < 2) {
+          alert("신뢰도를 위해 최소 2장 이상의 사진이 필요합니다."); return;
+      }
+      if (!window.confirm("수정된 내용을 저장하시겠습니까?")) return;
 
       const updatedForm = {
           ...editForm,
+          jobImages: JSON.stringify(images), 
+          totalCareer: selectedCareers.join(', '),
           tags: tags.join(' ')
       };
 
@@ -200,7 +219,7 @@ const JobPostDetail = () => {
           if (res.ok) {
               alert("수정이 완료되었습니다.");
               setIsEditing(false);
-              setJobData(prev => ({ ...prev, ...editForm, tags: tags.join(' ') }));
+              setJobData(prev => ({ ...prev, ...updatedForm }));
           } else {
               alert("수정 실패");
           }
@@ -208,430 +227,319 @@ const JobPostDetail = () => {
       .catch(err => console.error(err));
   };
 
-  // --- 지원하기 핸들러 ---
+  const handleTagInputChange = (e) => {
+    const value = e.target.value;
+    setTagInput(value);
+    if (value.trim() === '') { setSuggestions([]); return; }
+    const filtered = SAMPLE_TAGS.filter(tag => tag.includes(value) && !tags.includes(tag));
+    setSuggestions(filtered);
+  };
+  const addTag = (tagToAdd) => {
+    if (!tags.includes(tagToAdd)) setTags([...tags, tagToAdd]);
+    setTagInput(''); setSuggestions([]);
+  };
+  const handleTagKeyDown = (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addTag(tagInput.trim().startsWith('#') ? tagInput.trim() : `#${tagInput.trim()}`); }
+  };
+  const removeTag = (tag) => setTags(tags.filter(t => t !== tag));
+
   const handleApply = () => {
-    if (!isLoggedIn) {
-        alert("로그인이 필요합니다.");
-        navigate('/login');
-        return;
-    }
-    
-    if (hasApplied) {
-        alert("이미 지원한 공고입니다.");
-        return;
-    }
-
-    if (!resumes || resumes.length === 0) {
-        alert("등록된 이력서가 없습니다. 마이페이지에서 이력서를 먼저 작성해주세요.");
-        return;
-    }
-
-    const myResume = resumes[0];
-
-    const missingFields = [];
-    if (!myResume.profileImage) missingFields.push("프로필 사진");
-    if (!myResume.links) missingFields.push("외부 링크");
-    if (!myResume.selfIntro) missingFields.push("자기소개");
-
-    if (missingFields.length > 0) {
-        const msg = `${missingFields.join(', ')}가(이) 아직 작성되지 않았습니다.\n내용을 전부 작성하지 않는다면 합격에서 불이익을 받을 수 있습니다.\n계속 지원하시겠습니까?`;
-        if (!window.confirm(msg)) {
-            navigate('/resumes/create');
-            return;
-        }
-    }
-
-    if (jobData.totalCareer && user.career) {
-        if (!jobData.totalCareer.includes(user.career)) {
-            if (!window.confirm("기업이 요구하는 경력사항과 다릅니다. 지원하시겠습니까?")) return;
-        }
-    }
-
-    fetch('http://localhost:8080/api/applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            userId: user.id,
-            resumeId: myResume.id,
-            jobPostId: jobData.id
-        })
-    })
-    .then(async res => {
-        if (res.ok) {
-            alert("지원이 완료되었습니다!");
-            setHasApplied(true);
-            setApplicantCount(prev => prev + 1);
-        } else {
-            const msg = await res.text();
-            alert("지원 실패: " + msg);
-        }
-    })
-    .catch(err => console.error(err));
+      if (!isLoggedIn) { alert("로그인이 필요합니다."); navigate('/login'); return; }
+      if (hasApplied) { alert("이미 지원한 공고입니다."); return; }
+      if (!resumes.length) { alert("이력서가 없습니다."); return; }
+      fetch('http://localhost:8080/api/applications', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({userId:user.id, resumeId:resumes[0].id, jobPostId:jobData.id})
+      }).then(async r=>{ if(r.ok){alert("지원완료"); setHasApplied(true); setApplicantCount(prev=>prev+1);} else alert(await r.text()); });
   };
-
-  // --- 지원 상태 변경 핸들러 (기업용) ---
-  const handleStatusChange = (appId, status, applicantName) => {
-      const actionText = status === 'PASSED' ? '합격' : '불합격';
-      
-      if (!window.confirm(`${applicantName}님을 ${actionText} 시키시겠습니까?\n(확인 후에는 변경할 수 없습니다)`)) {
-          return;
-      }
-
-      fetch(`http://localhost:8080/api/applications/${appId}/status`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: status })
-      })
-      .then(res => {
-          if (res.ok) {
-              setApplicants(prev => prev.map(app => 
-                  app.applicationId === appId ? { ...app, status: status } : app
-              ));
-          } else {
-              alert("처리 실패");
-          }
-      });
+  const handleStatusChange = (aid, stat, name) => {
+      if(!window.confirm(`${name}님을 변경하시겠습니까?`)) return;
+      fetch(`http://localhost:8080/api/applications/${aid}/status`, {
+          method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:stat})
+      }).then(r=>{ if(r.ok) setApplicants(prev=>prev.map(a=>a.applicationId===aid?{...a,status:stat}:a)); });
   };
+  const handlePreviewResume = (rid) => { fetch(`http://localhost:8080/api/resumes/${rid}`).then(r=>r.json()).then(setSelectedResume); };
 
-  // [추가] 이력서 미리보기 핸들러
-  const handlePreviewResume = (resumeId) => {
-      // 서버에서 이력서 상세 정보 가져오기
-      fetch(`http://localhost:8080/api/resumes/${resumeId}`)
-        .then(res => res.json())
-        .then(data => {
-            setSelectedResume(data);
-        })
-        .catch(err => alert("이력서 정보를 불러오는데 실패했습니다."));
-  };
-
-  // [추가] 모달 닫기 핸들러
-  const closeResumeModal = () => {
-      setSelectedResume(null);
-  };
-
-  const getThumbnail = (jsonImages) => {
-    try {
-        const parsed = JSON.parse(jsonImages);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
-    } catch { return null; }
-  };
-
-  if (!jobData) return <div style={{padding:'50px', textAlign:'center'}}>로딩중...</div>;
+  if (!jobData) return <div style={{padding:'100px', textAlign:'center'}}>로딩중...</div>;
   
-  const mainImage = getThumbnail(jobData.jobImages);
+  const mainImage = images.length > 0 ? images[0] : null; 
   const isMyPost = user && user.role === 'COMPANY' && jobData.companyName === user.name;
+  const visibleImages = getVisibleImages();
 
   return (
     <div className="jd-container">
-      {/* 헤더 */}
       <header className="navbar">
-        <div className="logo-area">
-          <h1 className="nav-logo" onClick={() => navigate('/')}>커리어친구들</h1>
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img src="/img/logo.png" alt="커리어친구들" className="nav-logo-img" onError={(e)=>{e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} />
         </div>
         <nav className="nav-links">
-          <span onClick={() => navigate('/jobs')}>구인구직</span>
-          <span onClick={() => navigate('/companies')}>회사정보</span>
-          <span onClick={() => navigate('/community')}>커뮤니티</span>
+          <button className="nav-text-link active" style={{color:'#397EFF'}} onClick={() => navigate('/jobs')}>구인구직</button>
+          <button className="nav-text-link" onClick={() => navigate('/companies')}>회사정보</button>
+          <button className="nav-text-link" onClick={() => navigate('/community')}>커뮤니티</button>
         </nav>
-        <div className="auth-btn-area">
+        <div className="auth-area">
           {isLoggedIn ? (
-            <>
-              <button className="nav-btn" onClick={() => navigate('/mypage')}>
-                마이페이지 ({user.name})
-              </button>
-              <button className="nav-btn logout-btn" onClick={handleLogout}>
-                로그아웃
-              </button>
-            </>
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn" onClick={() => navigate('/mypage')}>{userName}님</button>
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>로그아웃</button>
+             </div>
           ) : (
-            <button className="nav-btn" onClick={() => navigate('/login')}>
-              회원가입 / 로그인
-            </button>
+             <button className="login-box-btn" onClick={() => navigate('/login')}>회원가입 / 로그인</button>
           )}
         </div>
       </header>
-      <div className="nav-divider"></div>
 
       <main className="jd-content">
-        <div className="back-link-area" onClick={() => navigate(-1)}>
-          ← 리스트로 돌아가기
-        </div>
+        <div className="back-link-area" onClick={() => navigate(-1)}>← 취소하고 돌아가기</div>
 
-        {/* 수정 버튼 */}
-        {isMyPost && !isEditing && (
-            <div style={{display:'flex', justifyContent:'flex-end', marginBottom:'10px'}}>
-                <button 
-                    onClick={() => setIsEditing(true)}
-                    style={{
-                        padding:'8px 20px', backgroundColor:'#f0f0f0', border:'1px solid #ccc',
-                        borderRadius:'4px', fontWeight:'bold', cursor:'pointer'
-                    }}
-                >
-                    수정하기
-                </button>
-            </div>
-        )}
+        {isEditing ? (
+            <div className="jc-content" style={{maxWidth:'1000px', padding:'0'}}>
+                <h1 className="jc-page-title">공고 수정</h1>
+                <div className="jc-divider"></div>
 
-        <div className="jd-images-row">
-           {mainImage ? (
-               <div className="jd-main-img" style={{backgroundImage: `url(${mainImage})`, backgroundSize:'cover'}}></div>
-           ) : (
-               <div className="gray-panel jd-main-img"></div>
-           )}
-           <div className="gray-panel jd-sub-img"></div>
-        </div>
-
-        {/* 헤더 정보 */}
-        <div className="jd-header-info">
-          {isEditing ? (
-              <div className="jd-text-info" style={{width:'100%'}}>
-                  {/* 수정 모드 UI 생략 (기존과 동일) */}
-                  <div style={{marginBottom:'15px'}}>
-                      <label style={{fontWeight:'bold', display:'block', marginBottom:'5px'}}>제목</label>
-                      <input 
-                        type="text" name="title" value={editForm.title} onChange={handleEditChange} 
-                        style={{width:'100%', height:'40px', padding:'5px', fontSize:'16px', border:'1px solid #ddd'}}
-                      />
-                  </div>
-                  <div style={{marginBottom:'15px', display:'flex', gap:'10px', alignItems:'center'}}>
-                      <label style={{fontWeight:'bold'}}>기간:</label>
-                      <input type="date" name="startDate" value={editForm.startDate} onChange={handleEditChange} style={{padding:'5px', border:'1px solid #ddd'}}/>
-                      ~
-                      <input type="date" name="endDate" value={editForm.endDate} onChange={handleEditChange} style={{padding:'5px', border:'1px solid #ddd'}}/>
-                  </div>
-                  <div style={{marginBottom:'15px'}}>
-                      <label style={{fontWeight:'bold', display:'block', marginBottom:'5px'}}>요구경력</label>
-                      <input 
-                        type="text" name="totalCareer" value={editForm.totalCareer} onChange={handleEditChange} 
-                        style={{width:'100%', height:'40px', padding:'5px', fontSize:'16px', border:'1px solid #ddd'}}
-                      />
-                  </div>
-
-                  {/* 태그 편집 */}
-                  <div style={{marginBottom:'15px'}}>
-                      <label style={{fontWeight:'bold', display:'block', marginBottom:'8px', color:'#4285F4'}}>태그 설정</label>
-                      <div className="tag-section-wrapper">
-                          <div className="tag-input-container">
-                              {tags.map((tag, index) => (
-                                  <div key={index} className="tag-chip">
-                                      <span>{tag}</span>
-                                      <button className="tag-remove-btn" onClick={() => removeTag(tag)}>×</button>
-                                  </div>
-                              ))}
-                              <input 
-                                  type="text" 
-                                  className="tag-input-field"
-                                  value={tagInput}
-                                  onChange={handleTagInputChange}
-                                  onKeyDown={handleTagKeyDown}
-                              />
-                          </div>
-                          {suggestions.length > 0 && (
-                              <ul className="suggestion-list">
-                                  {suggestions.map((suggestion, idx) => (
-                                      <li key={idx} onClick={() => addTag(suggestion)}>
-                                          {suggestion}
-                                      </li>
-                                  ))}
-                              </ul>
-                          )}
-                      </div>
-                  </div>
-                  
-                  <div style={{marginTop:'20px', display:'flex', gap:'10px'}}>
-                      <button onClick={handleUpdate} style={{padding:'10px 30px', backgroundColor:'#4285F4', color:'white', border:'none', borderRadius:'4px', fontWeight:'bold', cursor:'pointer'}}>저장</button>
-                      <button onClick={() => setIsEditing(false)} style={{padding:'10px 30px', backgroundColor:'#aaa', color:'white', border:'none', borderRadius:'4px', fontWeight:'bold', cursor:'pointer'}}>취소</button>
-                  </div>
-              </div>
-          ) : (
-              <>
-                <div className="jd-text-info">
-                    <h1 className="jd-title">{jobData.title}</h1>
-                    <p className="jd-subtitle">
-                      <span className="bold-text">{jobData.companyName}</span> 
-                      {jobData.companyAddress}
-                    </p>
-                    <p className="jd-period">모집기간: {jobData.startDate} ~ {jobData.endDate}</p>
-                    <p className="jd-career-req">요구경력: {jobData.totalCareer}</p>
+                <div className="jc-images-section">
+                    <input type="file" multiple accept="image/*" ref={fileInputRef} style={{display: 'none'}} onChange={handleImageUpload} />
+                    <div className="image-upload-header">
+                        <label>사진 관리 ({images.length}장) - <span style={{fontSize:'13px', color:'#397EFF'}}>첫 번째 사진이 목록 썸네일이 됩니다.</span></label>
+                        <button className="add-photo-btn" onClick={() => fileInputRef.current.click()}>사진 추가</button>
+                    </div>
                     
-                    <p style={{marginTop:'10px', color:'#4285F4', fontWeight:'bold', fontSize:'16px'}}>
-                        📢 지원현황 ({applicantCount}명)
-                    </p>
-                </div>
-                
-                <div className="jd-action">
-                    {isMyPost ? (
-                        <div className="company-admin-box">
-                            <h3>지원자 관리 ({applicants.length}명)</h3>
+                    <div className="carousel-container">
+                        {images.length >= 3 && <button className="carousel-btn left" onClick={prevImage}>&lt;</button>}
+                        <div className="carousel-view">
+                            {images.length === 0 ? (
+                                <><div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}></div>
+                                  <div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}></div></>
+                            ) : (
+                                <>
+                                  <div className="uploaded-image-box">
+                                      <img src={visibleImages[0]} alt="img-1" />
+                                      <button className="img-delete-btn" onClick={(e) => handleDeleteCurrentImage(e)}>×</button>
+                                      {imageIndex === 0 && <div className="thumbnail-badge">대표 사진</div>}
+                                  </div>
+
+                                  {images.length > 1 ? (
+                                      <div className="uploaded-image-box">
+                                          <img src={visibleImages[1]} alt="img-2" />
+                                      </div>
+                                  ) : (
+                                      <div className="gray-box upload-trigger" onClick={() => fileInputRef.current.click()}><span>+</span></div>
+                                  )}
+                                </>
+                            )}
                         </div>
-                    ) : (
-                        user?.role === 'JOB_SEEKER' && (
-                            <button 
-                                className="apply-btn" 
-                                onClick={handleApply}
-                                disabled={hasApplied}
-                                style={{ backgroundColor: hasApplied ? '#aaa' : '#4285F4', cursor: hasApplied ? 'default' : 'pointer' }}
-                            >
-                                {hasApplied ? "지원완료" : "지원하기"}
-                            </button>
-                        )
-                    )}
+                        {images.length >= 3 && <button className="carousel-btn right" onClick={nextImage}>&gt;</button>}
+                    </div>
+                    <p style={{fontSize:'12px', color:'#d32f2f', marginTop:'5px'}}>* 최소 2장 이상의 사진이 필요합니다.</p>
                 </div>
-              </>
-          )}
-        </div>
 
-        <div className="divider"></div>
+                <div className="jc-company-name-box">{jobData.companyName}</div>
 
-        {/* 지원자 목록 (기업 전용) */}
-        {!isEditing && isMyPost && (
-            <section className="jd-section">
-                <h3 className="jd-section-title">지원자 현황</h3>
-                {applicants.length === 0 ? (
-                    <p>아직 지원자가 없습니다.</p>
-                ) : (
-                    <div className="applicant-list">
-                        {applicants.map(app => (
-                            <div key={app.applicationId} className="applicant-card">
-                                <div style={{flex: 1}}>
-                                    <div style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'5px'}}>
-                                        <div style={{fontWeight:'bold', fontSize:'20px'}}>
-                                            {app.applicantName} <span style={{fontSize:'16px', fontWeight:'normal'}}>({app.applicantCareer})</span>
-                                        </div>
-                                        {/* [추가] 이력서 미리보기 버튼 */}
-                                        <button 
-                                            className="resume-preview-btn"
-                                            onClick={() => handlePreviewResume(app.resumeId)}
-                                        >
-                                            이력서 미리보기
-                                        </button>
-                                    </div>
-                                    <div style={{color:'#666', marginBottom:'5px'}}>이력서 제목: {app.resumeTitle}</div>
-                                    <div style={{fontSize:'14px', color:'#999'}}>
-                                        지원일: {app.appliedAt ? app.appliedAt.split('T')[0] : ''}
-                                    </div>
-                                </div>
-                                
-                                <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
-                                    {app.status === 'APPLIED' ? (
-                                        <>
-                                            <button 
-                                                onClick={() => handleStatusChange(app.applicationId, 'PASSED', app.applicantName)} 
-                                                className="status-action-btn pass"
-                                            >
-                                                합격
-                                            </button>
-                                            <button 
-                                                onClick={() => handleStatusChange(app.applicationId, 'FAILED', app.applicantName)} 
-                                                className="status-action-btn fail"
-                                            >
-                                                불합격
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <div className={`status-badge ${app.status === 'PASSED' ? 'pass' : 'fail'}`}>
-                                            {app.status === 'PASSED' ? '최종합격' : '불합격'}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                <div className="jc-form-group">
+                    <label className="jc-label">모집 기간</label>
+                    <div className="date-inputs">
+                        <input type="date" name="startDate" value={editForm.startDate} onChange={handleEditChange} />
+                        <span>~</span>
+                        <input type="date" name="endDate" value={editForm.endDate} onChange={handleEditChange} />
+                    </div>
+                </div>
+
+                <div className="jc-form-group">
+                    <label className="jc-label">제목</label>
+                    <div className="input-with-btn">
+                        <input type="text" name="title" value={editForm.title} onChange={handleEditChange} />
+                    </div>
+                </div>
+
+                <div className="jc-form-group">
+                    <label className="jc-label">총 경력 (중복 선택 가능)</label>
+                    <div className="career-selector">
+                        {CAREER_OPTIONS.map((option) => (
+                            <button 
+                                key={option} 
+                                className={`career-option-btn ${selectedCareers.includes(option) ? 'selected' : ''}`}
+                                onClick={() => toggleCareer(option)}
+                            >
+                                {option}
+                            </button>
                         ))}
                     </div>
-                )}
-                <div className="divider" style={{marginTop:'30px'}}></div>
-            </section>
-        )}
+                </div>
 
-        <section className="jd-section">
-          <h3 className="jd-section-title">포지션 상세 및 기업 소개</h3>
-          <div className="jd-description">
-            {isEditing ? (
-                <textarea 
-                    name="content" 
-                    value={editForm.content} 
-                    onChange={handleEditChange}
-                    style={{width:'100%', height:'300px', padding:'10px', fontSize:'16px', resize:'none', border:'1px solid #ddd'}}
-                ></textarea>
-            ) : (
-                <>
-                    <p style={{fontSize: '16px', lineHeight: '1.8', whiteSpace: 'pre-line', marginBottom:'30px'}}>
-                        {jobData.content || jobData.career}
-                    </p>
-                    
-                    {jobData.tags && (
-                        <div style={{marginTop:'20px'}}>
-                            <h4 style={{fontSize:'18px', fontWeight:'bold', marginBottom:'10px'}}>태그</h4>
-                            <div className="jd-view-tags">
-                                {jobData.tags.split(' ').map((tag, idx) => (
-                                    <span key={idx} className="jd-view-tag">{tag}</span>
-                                ))}
-                            </div>
-                        </div>
+                <div className="jc-form-group">
+                    <label className="jc-label">포지션 상세</label>
+                    <div className="textarea-wrapper">
+                        <textarea name="content" value={editForm.content} onChange={handleEditChange} rows="8"></textarea>
+                    </div>
+                </div>
+
+                <div className="jc-form-group">
+                    <label className="jc-label">태그</label>
+                    <div className="tag-input-container">
+                        {tags.map((tag, i) => (
+                            <div key={i} className="tag-chip"><span>{tag}</span><button onClick={() => removeTag(tag)} className="tag-remove-btn">×</button></div>
+                        ))}
+                        <input type="text" className="tag-input-field" placeholder="#태그 입력" value={tagInput} onChange={handleTagInputChange} onKeyDown={handleTagKeyDown} />
+                    </div>
+                    {suggestions.length > 0 && (
+                        <ul className="suggestion-list">
+                            {suggestions.map((s, i) => <li key={i} onClick={() => addTag(s)}>{s}</li>)}
+                        </ul>
                     )}
-                </>
-            )}
-          </div>
-        </section>
+                </div>
 
+                <div className="jc-actions">
+                    <button className="jc-btn save" onClick={handleUpdate}>수정 완료</button>
+                    <button className="jc-btn cancel" onClick={() => {
+                        if(window.confirm("수정을 취소하시겠습니까?")) navigate(0); 
+                    }}>취소</button>
+                </div>
+            </div>
+        ) : (
+            <div className="jd-inner-wrapper">
+                <div className="jd-images-row">
+                   {mainImage ? (
+                       <div className="jd-main-img" style={{backgroundImage: `url(${mainImage})`}}></div>
+                   ) : (
+                       <div className="jd-main-img"></div>
+                   )}
+                   <div className="jd-sub-img"></div>
+                </div>
+
+                <div className="jd-header-info">
+                    <div className="jd-text-info">
+                      <h1 className="jd-title">{jobData.title}</h1>
+                      <p className="jd-subtitle">
+                        <span className="bold-company">{jobData.companyName}</span> {jobData.companyAddress}
+                      </p>
+                      <p style={{marginTop:'10px', color:'#666', fontSize:'14px'}}>
+                          기간: {jobData.startDate} ~ {jobData.endDate} | 요구경력: {jobData.totalCareer}
+                      </p>
+                      <p style={{marginTop:'5px', color:'#397EFF', fontWeight:'bold', fontSize:'14px'}}>
+                          📢 현재 {applicantCount}명이 지원했습니다.
+                      </p>
+                    </div>
+                    <div className="jd-action">
+                      {isMyPost ? (
+                          <button className="apply-btn" style={{backgroundColor:'#666'}} onClick={() => setIsEditing(true)}>수정하기</button>
+                      ) : (
+                          user?.role === 'JOB_SEEKER' && (
+                              <button className="apply-btn" onClick={handleApply} disabled={hasApplied} style={{ backgroundColor: hasApplied ? '#aaa' : '#397EFF', cursor: hasApplied ? 'default' : 'pointer' }}>
+                                  {hasApplied ? "지원완료" : "지원하기"}
+                              </button>
+                          )
+                      )}
+                    </div>
+                </div>
+                <div className="jd-divider"></div>
+
+                {isMyPost && (
+                    <section className="jd-section">
+                        <h3 className="jd-section-title">지원자 현황</h3>
+                        <div className="applicant-list">
+                            {applicants.length===0 ? <p style={{color:'#999'}}>아직 지원자가 없습니다.</p> : applicants.map(app => (
+                                <div key={app.applicationId} className="applicant-card">
+                                    <div className="applicant-info-row">
+                                        <span className="app-name">{app.applicantName}</span>
+                                        <span className="app-career">({app.applicantCareer})</span>
+                                        <button className="resume-preview-btn" onClick={() => handlePreviewResume(app.resumeId)}>이력서 미리보기</button>
+                                    </div>
+                                    <div className="applicant-sub-info">이력서: {app.resumeTitle} | 지원일: {app.appliedAt?.split('T')[0]}</div>
+                                    <div className="applicant-actions">
+                                        {app.status === 'APPLIED' ? (
+                                            <><button className="status-action-btn pass" onClick={() => handleStatusChange(app.applicationId, 'PASSED', app.applicantName)}>합격</button>
+                                            <button className="status-action-btn fail" onClick={() => handleStatusChange(app.applicationId, 'FAILED', app.applicantName)}>불합격</button></>
+                                        ) : (
+                                            <span className={`status-badge ${app.status==='PASSED'?'pass':'fail'}`}>{app.status==='PASSED'?'최종합격':'불합격'}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="jd-divider" style={{marginTop:'30px'}}></div>
+                    </section>
+                )}
+                
+                <section className="jd-section">
+                  <h3 className="jd-section-title">포지션 상세</h3>
+                  <div className="jd-description"><p style={{whiteSpace: 'pre-line'}}>{jobData.content}</p></div>
+                </section>
+                <section className="jd-section">
+                  <h3 className="jd-section-title">태그</h3>
+                  <div className="jd-tags">{tags.length > 0 ? tags.map((t,i)=><span key={i}>#{t.replace('#','')}</span>) : <span style={{color:'#999'}}>태그 없음</span>}</div>
+                </section>
+            </div>
+        )}
       </main>
 
-      {/* [추가] 이력서 미리보기 모달 (팝업) */}
       {selectedResume && (
-          <div className="resume-modal-overlay" onClick={closeResumeModal}>
+          <div className="resume-modal-overlay" onClick={() => setSelectedResume(null)}>
               <div className="resume-modal-content" onClick={(e) => e.stopPropagation()}>
                   <div className="resume-modal-header">
                       <h2>{selectedResume.title}</h2>
-                      <button className="resume-modal-close" onClick={closeResumeModal}>&times;</button>
+                      <button className="resume-modal-close" onClick={() => setSelectedResume(null)}>&times;</button>
                   </div>
-                  
                   <div className="resume-modal-body">
-                      {/* 프로필 섹션 */}
                       <div className="rm-profile">
                           <div className="rm-avatar">
-                              {selectedResume.profileImage ? (
-                                  <img src={selectedResume.profileImage} alt="profile" />
-                              ) : (
-                                  <div className="rm-no-img">No Image</div>
-                              )}
+                              {selectedResume.profileImage ? <img src={selectedResume.profileImage} alt="profile"/> : <div className="rm-no-img">No Img</div>}
                           </div>
                           <div className="rm-info">
                               <h3>{selectedResume.user?.name}</h3>
-                              <p><strong>직군:</strong> {selectedResume.jobGroup}</p>
-                              <p><strong>경력:</strong> {selectedResume.career}</p>
-                              <p><strong>Email:</strong> {selectedResume.user?.email}</p>
+                              <p>{selectedResume.user?.email}</p>
+                              <p>{selectedResume.career} / {selectedResume.jobGroup}</p>
                           </div>
                       </div>
-
+                      
                       <hr className="rm-divider" />
+                      
+                      {/* [추가] 동적 섹션 렌더링 */}
+                      {selectedResume.customSections && (
+                         (() => {
+                           try {
+                             const sections = JSON.parse(selectedResume.customSections);
+                             return sections.map(sec => (
+                               <div key={sec.id} className="rm-section">
+                                  <h4>{sec.title}</h4>
+                                  <div className="rm-text-box" dangerouslySetInnerHTML={{ __html: sec.content }}></div>
+                               </div>
+                             ));
+                           } catch(e) { return null; }
+                         })()
+                      )}
 
-                      {/* 자기소개 */}
                       <div className="rm-section">
                           <h4>자기소개</h4>
-                          <div className="rm-text-box">
-                              {selectedResume.selfIntro || "내용 없음"}
+                          {selectedResume.selfIntro ? (
+                              <div className="rm-text-box" dangerouslySetInnerHTML={{ __html: selectedResume.selfIntro }}></div>
+                          ) : (
+                              <div className="rm-text-box">내용 없음</div>
+                          )}
+                      </div>
+                      
+                      <div className="rm-section">
+                          <h4>포트폴리오 / 링크</h4>
+                          <div className="rm-links">
+                              {selectedResume.links ? selectedResume.links.split(', ').map((l,i)=><a key={i} href={l} target="_blank" rel="noopener noreferrer">🔗 {l}</a>) : <p>링크 없음</p>}
                           </div>
                       </div>
 
-                      {/* 링크 */}
-                      <div className="rm-section">
-                          <h4>포트폴리오 / 링크</h4>
-                          {selectedResume.links ? (
-                              <div className="rm-links">
-                                  {selectedResume.links.split(', ').map((link, i) => (
-                                      <a key={i} href={link.startsWith('http') ? link : `https://${link}`} target="_blank" rel="noopener noreferrer">
-                                          🔗 {link}
-                                      </a>
-                                  ))}
-                              </div>
-                          ) : (
-                              <p style={{color:'#999'}}>등록된 링크가 없습니다.</p>
-                          )}
+                      {/* [추가] 이력서 상세보기 버튼 (오른쪽 하단) */}
+                      <div style={{display:'flex', justifyContent:'flex-end', marginTop:'20px'}}>
+                          <button 
+                             onClick={() => navigate(`/resumes/${selectedResume.id}`)}
+                             style={{
+                                 padding:'10px 20px', backgroundColor:'#397EFF', color:'white', 
+                                 border:'none', borderRadius:'6px', fontWeight:'bold', cursor:'pointer'
+                             }}
+                          >
+                              이력서 상세보기 &gt;
+                          </button>
                       </div>
                   </div>
               </div>
           </div>
       )}
-
     </div>
   );
 };

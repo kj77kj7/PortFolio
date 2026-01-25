@@ -1,0 +1,185 @@
+/* CommunityWrite.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.cw-page-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 상단바 (유지) */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+
+
+/* [수정 1] 메인 컨텐츠 - 1000px로 넓힘 (돌아가기 버튼 위치 확보) */
+.cw-content {
+    width: 100%;
+    max-width: 1000px; 
+    margin: 0 auto;
+    padding: 40px 20px 100px 20px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* [수정 2] 돌아가기 버튼 (1000px 기준 왼쪽 정렬) */
+.cw-back-link {
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    margin-bottom: 40px; /* 넉넉하게 띄움 */
+    font-weight: 500;
+}
+.cw-back-link:hover { color: #397EFF; text-decoration: underline; }
+
+/* [수정 3] 내부 래퍼 (700px) - 입력폼만 가운데로 모음 */
+.cw-inner-wrapper {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 타이틀 영역 */
+.cw-header-box {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.cw-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+/* 폼 박스 */
+.cw-form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 제목 입력창 */
+.cw-title-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 15px;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+.cw-title-input:focus { outline: none; border-color: #397EFF; }
+
+/* 내용 입력창 (높이 400px 유지) */
+.cw-textarea {
+    width: 100%;
+    height: 400px;
+    padding: 20px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: 1.6;
+}
+.cw-textarea:focus { outline: none; border-color: #397EFF; }
+
+/* 이미지 첨부 영역 */
+.cw-image-section {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cw-add-img-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #555;
+    font-weight: 700;
+    font-size: 15px;
+    width: fit-content;
+}
+.cw-add-img-btn:hover { color: #397EFF; }
+
+.plus-icon {
+    width: 40px;
+    height: 40px;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #aaa;
+    background-color: #f9f9f9;
+}
+
+/* 미리보기 리스트 */
+.cw-preview-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.cw-preview-item {
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+.cw-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 등록 버튼 영역 */
+.cw-submit-area {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.cw-submit-btn {
+    padding: 12px 40px;
+    background-color: #397EFF;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.cw-submit-btn:hover { background-color: #2d65cc; }

@@ -1,44 +1,107 @@
-/* 전체 컨테이너 (구인구직 페이지와 동일한 베이스) */
+/* Community.css - 디자인 통합 (Blue Theme) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
 .comm-container {
     width: 100%;
     min-height: 100vh;
     background-color: white;
     font-family: 'Noto Sans KR', sans-serif;
-}
-
-/* 헤더 및 공통 레이아웃은 App.css나 전역 스타일을 따름 */
-.comm-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-}
-
-/* 상단 타이틀 영역 */
-.comm-title-row {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #333;
+    flex-direction: column;
+    align-items: center;
 }
 
-.comm-page-title {
-    font-size: 28px;
-    font-weight: bold;
+/* 1. 상단 네비게이션바 (통일된 구조) */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; transition: color 0.2s; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+
+/* 로그인 버튼 */
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+
+
+/* 2. 메인 컨텐츠 (리스트 화면) */
+.comm-content {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 0 100px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 타이틀 영역 (New Design) */
+.comm-header-section {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 10px 15px 10px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 회색 밑줄 (::after 가상 요소) */
+.comm-header-section::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background-color: #D9D9D9;
+}
+
+.comm-title, .comm-page-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #000000;
+    margin: 0;
+}
+
+/* 버튼 영역 (오른쪽 정렬) */
+.comm-btn-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
 }
 
 .comm-write-btn {
-    padding: 10px 20px;
-    background-color: #4285F4;
+    padding: 10px 24px;
+    background-color: #397EFF; /* Blue Theme */
     color: white;
     border: none;
-    border-radius: 4px;
-    font-weight: bold;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.2s;
+}
+.comm-write-btn:hover { background-color: #2d65cc; }
+
+
+/* 테이블 스타일 (New Design) */
+.comm-table-container {
+    width: 100%;
 }
 
-/* --- 게시판 리스트 (테이블 형태) --- */
 .comm-table {
     width: 100%;
     border-collapse: collapse;
@@ -46,61 +109,81 @@
     font-size: 14px;
 }
 
+/* 헤더 스타일 */
 .comm-table th {
     padding: 15px 0;
-    border-bottom: 1px solid #ccc;
-    background-color: #f9f9f9;
-    font-weight: bold;
+    background-color: #f8f9fa;
+    font-weight: 700;
     color: #555;
+    border-top: 1px solid #333; 
+    border-bottom: 1px solid #ccc;
 }
 
 .comm-table td {
     padding: 15px 0;
     border-bottom: 1px solid #eee;
-    color: #333;
+    color: #444;
+    vertical-align: middle;
 }
 
-/* 제목 정렬 (왼쪽) */
-.text-left {
-    text-align: left;
-    padding-left: 20px !important;
-}
+.comm-row:hover { background-color: #fcfcfc; }
+
+.text-left { text-align: left; padding-left: 20px !important; }
 
 .comm-post-title {
     cursor: pointer;
-    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
 }
-.comm-post-title:hover {
-    text-decoration: underline;
+.comm-post-title:hover { color: #397EFF; text-decoration: underline; }
+
+.comment-cnt { color: #ff5252; font-size: 12px; font-weight: 700; margin-left: 5px; }
+
+.job-badge {
+    display: inline-block;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
 }
 
-.comment-cnt {
-    color: #ff5252;
-    font-size: 12px;
-    font-weight: bold;
-    margin-left: 5px;
-}
+.comm-id { color: #888; font-size: 13px; }
+.comm-author { color: #555; }
+.comm-date { color: #999; font-size: 13px; }
+.comm-count { color: #777; font-size: 13px; }
+.comm-count.like { color: #ff5252; }
 
-.author-info {
-    color: #666;
-}
+.no-data-msg { padding: 60px 0; color: #999; }
 
-/* --- 글쓰기 페이지 스타일 --- */
+
+/* --- [보존 기능] 글쓰기 페이지 스타일 (Write Page) --- */
+/* 기존 Community.css에 있던 내용을 Blue Theme에 맞춰 리디자인 */
+
 .cw-container {
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .cw-title-input {
     width: 100%;
     height: 50px;
-    font-size: 20px;
-    padding: 10px;
+    font-size: 18px; /* Slightly refined */
+    padding: 10px 15px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 6px;
     margin-bottom: 20px;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
 }
+.cw-title-input:focus { border-color: #397EFF; }
 
 .cw-textarea {
     width: 100%;
@@ -108,12 +191,17 @@
     padding: 15px;
     font-size: 16px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 6px;
     resize: none;
     margin-bottom: 30px;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    outline: none;
+    line-height: 1.6;
 }
+.cw-textarea:focus { border-color: #397EFF; }
 
-/* 하단 이미지 첨부 (Image 4 스타일) */
+/* 이미지 첨부 섹션 */
 .cw-image-section {
     border-top: 1px solid #eee;
     padding-top: 20px;
@@ -126,7 +214,10 @@
     cursor: pointer;
     color: #666;
     font-weight: bold;
+    font-size: 14px;
+    transition: color 0.2s;
 }
+.cw-add-img-btn:hover { color: #397EFF; }
 
 .plus-box {
     width: 50px;
@@ -138,12 +229,20 @@
     align-items: center;
     font-size: 24px;
     color: #aaa;
+    background-color: #fafafa;
+    transition: all 0.2s;
+}
+.cw-add-img-btn:hover .plus-box {
+    border-color: #397EFF;
+    color: #397EFF;
+    background-color: #f0f7ff;
 }
 
 .cw-preview-list {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 .cw-preview-img {
     width: 100px;
@@ -153,15 +252,18 @@
     border: 1px solid #ddd;
 }
 
+/* 등록 버튼 */
 .cw-submit-btn {
     width: 100%;
     height: 50px;
     margin-top: 40px;
-    background-color: #4285F4;
+    background-color: #397EFF; /* Blue Theme */
     color: white;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 700;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
+.cw-submit-btn:hover { background-color: #2d65cc; }

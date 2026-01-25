@@ -6,22 +6,31 @@ const CommunityDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // [로직] 상태 관리
   const [user, setUser] = useState(null);
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
 
-  // 댓글 작성/수정 관련 상태
+  // [로직] 댓글 작성/수정 관련 상태
   const [commentText, setCommentText] = useState('');
   const [isEditingComment, setIsEditingComment] = useState(null);
   const [editCommentText, setEditCommentText] = useState('');
 
-  // 좋아요 상태
+  // [로직] 좋아요 상태
   const [isLiked, setIsLiked] = useState(false);
 
+  // [디자인 지원] 헤더 UI를 위한 상태
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    // 1. 로그인 유저 확인
+    // [로직] 1. 로그인 유저 확인
     const storedUser = JSON.parse(sessionStorage.getItem('user'));
-    if (storedUser) setUser(storedUser);
+    if (storedUser) {
+        setUser(storedUser);
+        setIsLoggedIn(true);
+    } else {
+        setIsLoggedIn(false);
+    }
 
     const userId = storedUser ? storedUser.id : null;
     let url = `http://localhost:8080/api/community/${id}`;
@@ -29,7 +38,7 @@ const CommunityDetail = () => {
       url += `?userId=${userId}`;
     }
 
-    // 2. 게시글 상세 조회
+    // [로직] 2. 게시글 상세 조회
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -38,7 +47,7 @@ const CommunityDetail = () => {
       })
       .catch(err => console.error(err));
 
-    // 3. 댓글 목록 조회
+    // [로직] 3. 댓글 목록 조회
     fetchComments();
   }, [id]);
 
@@ -49,12 +58,37 @@ const CommunityDetail = () => {
       .catch(err => console.error(err));
   };
 
-  // --- 게시글 관련 핸들러 ---
+  // [디자인 지원] 로그아웃 핸들러
+  const handleLogout = () => {
+    sessionStorage.removeItem('user');
+    setIsLoggedIn(false);
+    navigate('/');
+  };
+
+  // --- [로직] 게시글 관련 핸들러 ---
 
   // 게시글 수정 페이지로 이동
   const handleEditPost = () => {
-    // 수정 모드임을 알리기 위해 state 전달 (백엔드 연동 전이라도 UI 흐름 확인 가능)
     navigate('/community/write', { state: { mode: 'edit', postData: post } });
+  };
+
+  // [추가된 로직] 게시글 삭제
+  const handleDeletePost = () => {
+    if (!window.confirm("정말로 이 게시글을 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+
+    fetch(`http://localhost:8080/api/community/${id}`, {
+      method: 'DELETE',
+    })
+    .then(res => {
+      if (res.ok) {
+        alert("게시글이 삭제되었습니다.");
+        navigate('/community'); // 목록 화면으로 이동
+      } else {
+        // 서버에서 에러 메시지를 텍스트로 줄 경우를 대비해 처리 (선택사항)
+        res.text().then(text => alert(text || "삭제 실패")); 
+      }
+    })
+    .catch(err => console.error(err));
   };
 
   // 좋아요 토글
@@ -80,7 +114,7 @@ const CommunityDetail = () => {
       .catch(err => console.error(err));
   };
 
-  // --- 댓글 관련 핸들러 ---
+  // --- [로직] 댓글 관련 핸들러 ---
 
   // 댓글 작성
   const handleSubmitComment = () => {
@@ -140,7 +174,7 @@ const CommunityDetail = () => {
     .catch(err => console.error(err));
   };
 
-  // 엔터 키로 댓글 등록 (Shift+Enter는 줄바꿈)
+  // 엔터 키로 댓글 등록
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       if (e.shiftKey) return;
@@ -165,53 +199,74 @@ const CommunityDetail = () => {
 
   return (
     <div className="cd-container">
-      {/* 상단 네비게이션 */}
-      <header className="cd-nav">
-        <div className="cd-left-back" onClick={() => navigate('/community')}>
-          ← 취소하고 돌아가기
+      {/* [디자인] 상단 네비게이션 바 */}
+      <header className="navbar">
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img 
+                src="/img/logo.png" 
+                alt="커리어친구들" 
+                className="nav-logo-img"
+                onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} 
+            />
         </div>
+        
+        <nav className="nav-links">
+          <button className="nav-text-link" onClick={() => navigate('/jobs')}>구인구직</button>
+          <button className="nav-text-link" onClick={() => navigate('/companies')}>회사정보</button>
+          <button className="nav-text-link active" style={{color:'#397EFF'}} onClick={() => navigate('/community')}>커뮤니티</button>
+        </nav>
 
-        <div className="cd-nav-right">
-          {user ? (
-            <span className="cd-mypage-btn" onClick={() => navigate('/mypage')}>
-              마이페이지
-            </span>
+        <div className="auth-area">
+          {isLoggedIn && user ? (
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn" onClick={() => navigate('/mypage')}>
+                  {user.name}님
+                </button>
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>
+                  로그아웃
+                </button>
+             </div>
           ) : (
-            <span className="cd-login-btn" onClick={() => navigate('/login')}>
-              로그인
-            </span>
+             <button className="login-box-btn" onClick={() => navigate('/login')}>
+               회원가입 / 로그인
+             </button>
           )}
         </div>
       </header>
+      
+      {/* [디자인] '취소하고 돌아가기' 위치 */}
+      <div className="back-link-area-wrapper">
+        <div className="back-link-area" onClick={() => navigate('/community')}>
+          ← 취소하고 돌아가기
+        </div>
+      </div>
 
-      {/* 메인 콘텐츠 래퍼 */}
+      {/* [디자인] 메인 콘텐츠 래퍼 */}
       <div className="cd-wrapper">
-        <h2 className="cd-main-title">커뮤니티</h2>
-        <div className="cd-divider" />
-
-        {/* 게시글 헤더 (제목 + 작성자 정보 + 수정버튼) */}
-        <div className="cd-header">
-          <h3 className="cd-post-title">{post.title}</h3>
-
-          <div className="cd-author-info">
-            <div className="cd-author-top">
-                <span className="cd-author-name">{post.authorName}</span>
-                <span className="cd-author-sub">
-                {post.authorCareer || '경력미상'} ·{' '}
-                {post.authorJob ? post.authorJob.split(',')[0] : '직군미상'}
-                </span>
-            </div>
-            
-            {/* 게시글 작성자 본인일 때만 '수정' 버튼 노출 */}
-            {user && user.id === post.userId && (
-                <div className="cd-post-edit-btn" onClick={handleEditPost}>
-                    수정
-                </div>
-            )}
-          </div>
+        
+        {/* [디자인] 커뮤니티 타이틀 */}
+        <div className="cd-header-box">
+             <h2 className="cd-main-title">커뮤니티</h2>
         </div>
 
-        {/* 이미지 영역 */}
+        {/* [디자인] 게시글 헤더 (제목 + 작성자 정보) */}
+        <div className="cd-post-header-area">
+            
+            {/* 게시글 제목 */}
+            <h3 className="cd-post-title">{post.title}</h3>
+
+            {/* 작성자 정보 (우측 상단) */}
+            <div className="cd-author-info-box">
+                <span className="cd-author-name-text">{post.authorName}</span>
+                <div className="cd-author-details-text">
+                    <span className="cd-author-sub-text">{post.authorCareer || '경력미상'}</span>
+                    <span className="cd-author-sub-text-separator">·</span>
+                    <span className="cd-author-sub-text">{post.authorJob ? post.authorJob.split(',')[0] : '직군미상'}</span>
+                </div>
+            </div>
+        </div>
+        
+        {/* [디자인] 이미지 영역 */}
         {postImages.length > 0 && (
           <div className="cd-img-box">
             {postImages.map((img, idx) => (
@@ -220,10 +275,17 @@ const CommunityDetail = () => {
           </div>
         )}
 
-        {/* 본문 텍스트 */}
+        {/* [디자인] 본문 텍스트 */}
         <p className="cd-content">{post.content}</p>
-
-        {/* 좋아요 / 댓글수 아이콘 바 */}
+        
+        {/* [디자인] 작성일자 */}
+        <div className="cd-post-date-wrapper">
+            <span className="cd-post-date-text">
+                {post.createdAt ? post.createdAt.substring(0, 10) : '-'}
+            </span>
+        </div>
+        
+        {/* [디자인] 좋아요 / 댓글수 아이콘 바 */}
         <div className="cd-actions">
           <button className="cd-icon-btn" onClick={handleLike}>
             <span
@@ -239,8 +301,14 @@ const CommunityDetail = () => {
             💬 <span>{comments.length}</span>
           </button>
         </div>
+        
+        {/* [디자인] 댓글 영역 시작 구분선 */}
+        <div className="cd-divider" />
+        
+        {/* [디자인] 댓글 섹션 */}
+        <h4 className="cd-comment-section-title">댓글 ({comments.length})</h4>
 
-        {/* 댓글 리스트 */}
+        {/* [디자인] 댓글 리스트 */}
         <div className="cd-comment-list">
           {comments.map(comment => (
             <div key={comment.id} className="cd-comment-item">
@@ -248,19 +316,19 @@ const CommunityDetail = () => {
                 {comment.userProfile ? (
                   <img src={comment.userProfile} alt="profile" />
                 ) : (
-                  <div className="gray-circle" />
+                  <div className="gray-circle-placeholder" />
                 )}
               </div>
 
               <div className="cd-comment-body">
-                {/* 댓글 메타 정보 (이름, 경력, 수정/삭제 버튼) */}
+                {/* 댓글 메타 정보 */}
                 <div className="cd-comment-meta">
                   <span className="c-name">{comment.userName}</span>
                   <span className="c-sub">
                     {comment.userCareer} · {comment.userJob ? comment.userJob.split(',')[0] : ''}
                   </span>
 
-                  {/* 댓글 작성자 본인일 때만 수정/삭제 버튼 노출 */}
+                  {/* [로직] 댓글 작성자 본인일 때만 수정/삭제 버튼 노출 */}
                   {user && user.id === comment.userId && isEditingComment !== comment.id && (
                     <div className="cd-comment-actions">
                         <span
@@ -280,7 +348,7 @@ const CommunityDetail = () => {
                   )}
                 </div>
 
-                {/* 댓글 수정 모드 vs 일반 모드 */}
+                {/* [로직] 댓글 수정 모드 vs 일반 모드 */}
                 {isEditingComment === comment.id ? (
                   <div className="cd-edit-wrap">
                     <textarea
@@ -308,7 +376,7 @@ const CommunityDetail = () => {
           ))}
         </div>
 
-        {/* 하단 댓글 입력창 */}
+        {/* [디자인] 하단 댓글 입력창 */}
         <div className="cd-comment-input">
           <textarea
             placeholder="댓글을 남겨보세요!"
@@ -320,6 +388,20 @@ const CommunityDetail = () => {
             저장
           </button>
         </div>
+        
+        {/* [디자인+로직] 하단 게시글 수정/삭제 버튼 (작성자 본인만 표시) */}
+        {user && user.id === post.userId && (
+            <div className="cd-edit-action-bar">
+                <button className="cd-edit-btn-large" onClick={handleEditPost}>
+                    수정
+                </button>
+                {/* 추가된 삭제 버튼 */}
+                <button className="cd-delete-btn-large" onClick={handleDeletePost}>
+                    삭제
+                </button>
+            </div>
+        )}
+
       </div>
     </div>
   );

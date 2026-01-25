@@ -5,29 +5,27 @@ import '../styles/Community.css';
 const CommunityMain = () => {
   const navigate = useNavigate();
   
-  // 게시글 목록 데이터
+  // [로직] 게시글 목록 데이터 및 상태 관리
   const [posts, setPosts] = useState([]);
-  
-  // 로그인 상태 관리
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    // 1. 로그인 세션 체크
+    // [로직] 1. 로그인 세션 체크
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
         setIsLoggedIn(true);
         setUserName(user.name);
     }
 
-    // 2. 게시글 목록 불러오기 (백엔드 API 호출)
+    // [로직] 2. 게시글 목록 불러오기 (백엔드 API 호출)
     fetch('http://localhost:8080/api/community')
       .then(res => res.json())
       .then(data => setPosts(data))
       .catch(err => console.error("게시글 로드 실패:", err));
   }, []);
 
-  // 로그아웃 핸들러
+  // [로직] 로그아웃 핸들러
   const handleLogout = () => {
     sessionStorage.removeItem('user');
     setIsLoggedIn(false);
@@ -36,124 +34,127 @@ const CommunityMain = () => {
 
   return (
     <div className="comm-container">
-      {/* 헤더 네비게이션 */}
-      <header className="navbar" style={{height:'80px', padding:'0 50px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #eee'}}>
-        <div className="logo-area">
-            <h1 className="nav-logo" onClick={() => navigate('/')} style={{color:'#2E7D32', fontSize:'26px', fontWeight:'bold', cursor:'pointer'}}>
-                커리어친구들
-            </h1>
+      {/* [디자인] 상단 네비게이션 (CommunityMain1.jsx 스타일) */}
+      <header className="navbar">
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img 
+                src="/img/logo.png" 
+                alt="커리어친구들" 
+                className="nav-logo-img"
+                onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} 
+            />
         </div>
-        <nav className="nav-links" style={{display:'flex', gap:'6vw', fontSize:'18px', fontWeight:'bold'}}>
-            <span onClick={() => navigate('/jobs')} style={{cursor:'pointer'}}>구인구직</span>
-            <span onClick={() => navigate('/companies')} style={{cursor:'pointer'}}>회사정보</span>
-            <span onClick={() => navigate('/community')} style={{color:'#2E7D32', cursor:'pointer'}}>커뮤니티</span>
+        
+        <nav className="nav-links">
+          <button className="nav-text-link" onClick={() => navigate('/jobs')}>구인구직</button>
+          <button className="nav-text-link" onClick={() => navigate('/companies')}>회사정보</button>
+          <button className="nav-text-link active" style={{color:'#397EFF'}} onClick={() => navigate('/community')}>커뮤니티</button>
         </nav>
-        <div className="auth-btn-area">
+
+        <div className="auth-area">
           {isLoggedIn ? (
-            <>
-                <button 
-                    className="nav-btn" 
-                    onClick={() => navigate('/mypage')}
-                    style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer', marginRight:'10px'}}
-                >
-                    마이페이지 ({userName})
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn" onClick={() => navigate('/mypage')}>
+                  {userName}님
                 </button>
-                <button 
-                    className="nav-btn logout-btn" 
-                    onClick={handleLogout}
-                    style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}
-                >
-                    로그아웃
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>
+                  로그아웃
                 </button>
-            </>
+             </div>
           ) : (
-            <button 
-                className="nav-btn" 
-                onClick={() => navigate('/login')}
-                style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}
-            >
-                회원가입 / 로그인
-            </button>
+             <button className="login-box-btn" onClick={() => navigate('/login')}>
+               회원가입 / 로그인
+             </button>
           )}
         </div>
       </header>
 
-      {/* 메인 컨텐츠 */}
-      <div className="comm-content">
-        <div className="comm-title-row">
-            <h2 className="comm-page-title">커뮤니티</h2>
+      <main className="comm-content">
+        
+        {/* [디자인] 1. 타이틀 섹션 */}
+        <div className="comm-header-section">
+            <h1 className="comm-title">커뮤니티</h1>
+        </div>
+
+        {/* [디자인] 2. 버튼 섹션 */}
+        <div className="comm-btn-row">
             <button className="comm-write-btn" onClick={() => navigate('/community/write')}>
                 글쓰기
             </button>
         </div>
 
-        {/* 게시판 리스트 테이블 */}
-        <table className="comm-table">
-            <thead>
-                <tr>
-                    <th style={{width:'8%'}}>번호</th>
-                    <th style={{width:'12%'}}>직군</th>
-                    <th style={{width:'40%'}}>제목</th>
-                    <th style={{width:'15%'}}>글쓴이</th>
-                    <th style={{width:'10%'}}>작성일</th>
-                    <th style={{width:'7%'}}>조회</th>
-                    <th style={{width:'7%'}}>추천</th>
-                </tr>
-            </thead>
-            <tbody>
-                {posts.length === 0 ? (
+        {/* [디자인] 3. 리스트 섹션 (테이블) */}
+        <div className="comm-table-container">
+            <table className="comm-table">
+                <thead>
                     <tr>
-                        <td colSpan="7" style={{padding:'50px', textAlign:'center', color:'#999'}}>
-                            등록된 게시글이 없습니다.
-                        </td>
+                        <th style={{width:'8%'}}>번호</th>
+                        <th style={{width:'10%'}}>직군</th>
+                        <th style={{width:'45%'}}>제목</th>
+                        <th style={{width:'12%'}}>글쓴이</th>
+                        <th style={{width:'13%'}}>작성일</th>
+                        <th style={{width:'6%'}}>조회</th>
+                        <th style={{width:'6%'}}>추천</th>
                     </tr>
-                ) : (
-                    posts.map((post) => (
-                        <tr key={post.id}>
-                            {/* 글 번호 */}
-                            <td>{post.id}</td>
-                            
-                            {/* 직군 (여러 개일 경우 첫 번째만 표시) */}
-                            <td>
-                                {post.authorJob ? post.authorJob.split(',')[0] : '미설정'}
+                </thead>
+                <tbody>
+                    {posts.length === 0 ? (
+                        <tr>
+                            <td colSpan="7" className="no-data-msg">
+                                등록된 게시글이 없습니다.
                             </td>
-                            
-                            {/* 제목 (클릭 시 상세페이지 이동) */}
-                            <td className="text-left">
-                                <span 
-                                    className="comm-post-title" 
-                                    onClick={() => navigate(`/community/${post.id}`)}
-                                >
-                                    {post.title}
-                                </span>
-                                {/* 댓글 수 표시 */}
-                                <span className="comment-cnt">
-                                    [{post.commentCount}]
-                                </span>
-                            </td>
-                            
-                            {/* 글쓴이 및 연차 */}
-                            <td className="author-info">
-                                {post.authorName} 
-                                <span style={{fontSize:'12px', color:'#888', marginLeft:'4px'}}>
-                                    ({post.authorCareer || '경력미상'})
-                                </span>
-                            </td>
-                            
-                            {/* 작성일 (YYYY-MM-DD만 표시) */}
-                            <td>{post.createdAt}</td>
-                            
-                            {/* 조회수 */}
-                            <td>{post.viewCount}</td>
-                            
-                            {/* 추천수 */}
-                            <td>{post.likeCount}</td>
                         </tr>
-                    ))
-                )}
-            </tbody>
-        </table>
-      </div>
+                    ) : (
+                        posts.map((post) => (
+                            <tr key={post.id} className="comm-row">
+                                {/* [로직] ID 표시 */}
+                                <td className="comm-id">{post.id}</td>
+                                
+                                {/* [로직] 직군 표시 */}
+                                <td>
+                                    <span className="job-badge">
+                                        {post.authorJob ? post.authorJob.split(',')[0] : '미설정'}
+                                    </span>
+                                </td>
+                                
+                                {/* [로직] 제목 및 댓글수 */}
+                                <td className="text-left">
+                                    <span 
+                                        className="comm-post-title" 
+                                        onClick={() => navigate(`/community/${post.id}`)}
+                                    >
+                                        {post.title}
+                                    </span>
+                                    {post.commentCount > 0 && (
+                                        <span className="comment-cnt">[{post.commentCount}]</span>
+                                    )}
+                                </td>
+                                
+                                {/* [로직] 글쓴이 + 경력 정보 통합 표시 */}
+                                <td className="comm-author">
+                                    {post.authorName}
+                                    <span style={{fontSize:'11px', color:'#888', marginLeft:'4px'}}>
+                                        ({post.authorCareer || '경력미상'})
+                                    </span>
+                                </td>
+                                
+                                {/* [로직] 작성일 */}
+                                <td className="comm-date">
+                                    {post.createdAt ? post.createdAt.substring(0, 10) : '-'}
+                                </td>
+                                
+                                {/* [로직] 조회수 */}
+                                <td className="comm-count">{post.viewCount}</td>
+                                
+                                {/* [로직] 추천수 */}
+                                <td className="comm-count like">{post.likeCount}</td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+      </main>
     </div>
   );
 };

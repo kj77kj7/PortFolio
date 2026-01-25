@@ -13,6 +13,7 @@ import ResumeCreate from './pages/ResumeCreate';
 import CommunityMain from './pages/CommunityMain';
 import CommunityWrite from './pages/CommunityWrite';
 import CommunityDetail from './pages/CommunityDetail'; // [추가
+import ResumeDetail from './pages/ResumeDetail'; // 경로에 맞게 수정
 
 // [중요] 아래 경로를 'CompanyMyPage'가 아니라 'MyPage'로 바꿔야 분기 처리가 됩니다.
 import MyPage from './pages/MyPage'; 
@@ -50,6 +51,8 @@ function App() {
 
         {/* [추가] 커뮤니티 상세 경로 */}
         <Route path="/community/:id" element={<CommunityDetail />} />
+
+        <Route path="/resumes/:id" element={<ResumeDetail />} />
 
       </Routes>
     </Router>

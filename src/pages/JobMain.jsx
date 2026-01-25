@@ -2,19 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/JobMain.css';
 
+// [디자인 2] 검색 문구 배열
+const SEARCH_PHRASES = [
+  "관심있는 공고를 검색해보세요",
+  "나에게 딱 맞는 공고를 찾아보세요",
+  "내 전공을 살릴 수 있는 공고는?",
+];
+
 const JobMain = () => {
   const navigate = useNavigate();
+  
+  // [기능 1] 상태 관리 (로직 유지)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isCompany, setIsCompany] = useState(false);
   
   const [jobPosts, setJobPosts] = useState([]); 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; 
-
-  const [isCompany, setIsCompany] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
+  
+  // [디자인 2] 랜덤 플레이스홀더 상태
+  const [placeholderText, setPlaceholderText] = useState(SEARCH_PHRASES[0]);
 
   useEffect(() => {
+    // [디자인 2] 랜덤 문구 설정
+    setPlaceholderText(SEARCH_PHRASES[Math.floor(Math.random() * SEARCH_PHRASES.length)]);
+    
+    // [기능 1] 유저 세션 확인 및 권한 설정
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user) {
       setIsLoggedIn(true);
@@ -23,9 +38,12 @@ const JobMain = () => {
         setIsCompany(true);
       }
     }
+    
+    // [기능 1] 초기 데이터 로드
     fetchJobs();
   }, []);
 
+  // [기능 1] 검색 및 데이터 Fetch 함수
   const fetchJobs = (keyword = '') => {
     let url = 'http://localhost:8080/api/jobs';
     if (keyword) {
@@ -33,23 +51,30 @@ const JobMain = () => {
     }
     fetch(url)
       .then(res => res.json())
-      .then(data => setJobPosts(data))
+      .then(data => {
+        // [기능 1] 최신순 정렬 유지
+        const sortedData = data.sort((a, b) => b.id - a.id);
+        setJobPosts(sortedData);
+      })
       .catch(err => console.error(err));
   };
 
+  // [기능 1] 검색 핸들러
   const handleSearch = () => {
     fetchJobs(searchTerm);
-    setCurrentPage(1);
+    setCurrentPage(1); // 검색 시 1페이지로 초기화
   };
 
+  // [기능 1] 로그아웃 핸들러
   const handleLogout = () => {
     sessionStorage.removeItem('user');
     setIsLoggedIn(false);
     setUserName('');
     setIsCompany(false);
-    navigate('/'); 
+    navigate(0); // 새로고침
   };
 
+  // [기능 1] 페이지네이션 계산 로직
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentPosts = jobPosts.slice(indexOfFirstItem, indexOfLastItem);
@@ -58,6 +83,7 @@ const JobMain = () => {
   const handlePrevPage = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
   const handleNextPage = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
 
+  // [기능 1] 썸네일 추출 헬퍼 함수
   const getThumbnail = (jsonImages) => {
       try {
           const parsed = JSON.parse(jsonImages);
@@ -68,55 +94,46 @@ const JobMain = () => {
 
   return (
     <div className="job-main-container">
-      {/* [수정] 통일된 헤더 스타일 */}
-      <header className="jm-header" style={{height:'80px', padding:'0 50px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:'1px solid #eee', backgroundColor:'white'}}>
-         <div className="logo-area">
-            <h1 className="nav-logo" onClick={() => navigate('/')} style={{color:'#2E7D32', fontSize:'26px', fontWeight:'bold', cursor:'pointer', margin:0}}>
-                커리어친구들
-            </h1>
-         </div>
-         {/* 메뉴 간격 gap: 50px 로 통일 */}
-         <nav className="nav-links" style={{display:'flex', gap:'50px', fontSize:'18px', fontWeight:'bold'}}>
-             <span onClick={() => navigate('/jobs')} style={{color:'#2E7D32', cursor:'pointer'}}>구인구직</span>
-             <span onClick={() => navigate('/companies')} style={{color:'#333', cursor:'pointer'}}>회사정보</span>
-             <span onClick={() => navigate('/community')} style={{color:'#333', cursor:'pointer'}}>커뮤니티</span>
-         </nav>
-         
-         <div className="auth-btn-area">
-            {isLoggedIn ? (
-              <>
-                <button className="nav-btn" onClick={() => navigate('/mypage')} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer', marginRight:'10px'}}>
-                  마이페이지 ({userName})
+      {/* [디자인 2] 헤더 스타일 적용 */}
+      <header className="navbar">
+        <div className="logo-area" onClick={() => navigate('/')}>
+            <img 
+                src="img/logo.png" 
+                alt="커리어친구들" 
+                className="nav-logo-img"
+                onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='커리어친구들';}} 
+            />
+        </div>
+        
+        <nav className="nav-links">
+             <button className="nav-text-link active" style={{color:'#397EFF'}} onClick={() => navigate('/jobs')}>구인구직</button>
+             <button className="nav-text-link" onClick={() => navigate('/companies')}>회사정보</button>
+             <button className="nav-text-link" onClick={() => navigate('/community')}>커뮤니티</button>
+        </nav>
+        
+        <div className="auth-area">
+          {isLoggedIn ? (
+             <div style={{display:'flex', gap:'10px'}}>
+                <button className="login-box-btn" onClick={() => navigate('/mypage')}>
+                  {userName}님
                 </button>
-                <button className="nav-btn logout-btn" onClick={handleLogout} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}>
+                <button className="login-box-btn" onClick={handleLogout} style={{width:'100px', color:'#333'}}>
                   로그아웃
                 </button>
-              </>
-            ) : (
-              <button className="nav-btn" onClick={() => navigate('/login')} style={{padding:'8px 20px', borderRadius:'4px', border:'1px solid #ddd', backgroundColor:'white', color:'#4285F4', fontWeight:'bold', cursor:'pointer'}}>
-                회원가입 / 로그인
-              </button>
-            )}
-         </div>
+             </div>
+          ) : (
+            <button className="login-box-btn" onClick={() => navigate('/login')}>
+              회원가입 / 로그인
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="jm-content">
-        <div className="jm-search-bar">
-            <input 
-                type="text" 
-                placeholder="관심있는 기업이나 공고를 검색해보세요" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-            <button className="search-icon-btn" onClick={handleSearch}>🔍</button>
-        </div>
-
+        {/* [디자인 2] 타이틀 영역 및 글 작성 버튼 */}
         <div className="jm-title-row">
-            <div>
-                <h2 className="section-title">구인구직</h2>
-                <p className="section-subtitle">가장 최근에 올라온 글을 확인해보세요!</p>
-            </div>
+            <h2 className="section-title">구인구직</h2>
+            {/* [기능 1] 기업 회원일 때만 글 작성 버튼 표시 */}
             {isCompany && (
                 <button className="write-post-btn" onClick={() => navigate('/jobs/create')}>
                     글 작성
@@ -124,8 +141,31 @@ const JobMain = () => {
             )}
         </div>
 
+        {/* [디자인 2] 검색창 디자인 (타이틀 아래 위치) */}
+        <div className="jm-search-banner">
+            <input 
+                type="text" 
+                className="jm-search-input"
+                placeholder={placeholderText}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <button className="jm-search-btn" onClick={handleSearch}>
+                <img 
+                    src="img/search.png" 
+                    alt="검색" 
+                    className="search-icon-img"
+                    onError={(e) => {e.target.style.display='none'; e.target.parentElement.innerText='🔍';}}
+                />
+            </button>
+        </div>
+
+        {/* [디자인 2] 리스트 래퍼 및 페이지네이션 버튼 */}
         <div className="jm-list-wrapper">
-            <button className="page-arrow-btn left" onClick={handlePrevPage} disabled={currentPage === 1}>&lt;</button>
+            {/* [기능 1] 이전 페이지 버튼 */}
+            <button className="page-arrow-btn" onClick={handlePrevPage} disabled={currentPage === 1}>&lt;</button>
+            
             <div className="jm-grid">
                 {currentPosts.length > 0 ? (
                     currentPosts.map((post) => {
@@ -135,13 +175,16 @@ const JobMain = () => {
                                 {thumbnail ? (
                                     <div className="image-placeholder" style={{backgroundImage: `url(${thumbnail})`, backgroundSize: 'cover', backgroundPosition: 'center'}}></div>
                                 ) : (
-                                    <div className="gray-panel image-placeholder"></div>
+                                    <div className="image-placeholder"></div>
                                 )}
                                 <div className="job-info">
-                                    <h3 style={{fontSize:'18px', fontWeight:'bold', margin:'0 0 5px 0'}}>[ {post.title} ]</h3>
-                                    <p style={{fontSize:'14px', color:'#666', margin:'0 0 3px 0'}}>{post.startDate} ~ {post.endDate}</p>
-                                    <p style={{fontSize:'15px', fontWeight:'bold', color:'#333', margin:'0 0 3px 0'}}>{post.companyName}</p>
-                                    <p style={{fontSize:'14px', color:'#888', margin:'0'}}>{post.companyAddress}</p>
+                                    <h3>[ {post.title} ]</h3>
+                                    <p style={{fontSize:'12px', color:'#999', marginBottom:'5px'}}>
+                                        {post.startDate} ~ {post.endDate}
+                                    </p>
+                                    <p style={{fontSize:'14px',fontWeight:'bold', color:'#333', marginBottom:'2px'}}>
+                                        {post.companyName}
+                                    </p>
                                 </div>
                             </div>
                         );
@@ -150,7 +193,9 @@ const JobMain = () => {
                     <div className="no-data">등록된 공고가 없습니다.</div>
                 )}
             </div>
-            <button className="page-arrow-btn right" onClick={handleNextPage} disabled={currentPage === totalPages || totalPages === 0}>&gt;</button>
+
+            {/* [기능 1] 다음 페이지 버튼 */}
+            <button className="page-arrow-btn" onClick={handleNextPage} disabled={currentPage === totalPages || totalPages === 0}>&gt;</button>
         </div>
       </div>
     </div>
