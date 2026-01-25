@@ -23,12 +23,11 @@ public class ResumeController {
         return ResponseEntity.ok(resumeService.getResumesByUser(userId));
     }
 
-    // [수정] 이력서 상세 조회 (팝업용 DTO 반환으로 변경)
+    // 이력서 상세 조회
     @GetMapping("/{resumeId}")
     public ResponseEntity<ResumeResponseDto> getResume(@PathVariable Long resumeId) {
         Resume resume = resumeService.getResume(resumeId);
 
-        // Entity -> DTO 변환 (순환 참조 방지)
         UserDto userDto = UserDto.builder()
                 .id(resume.getUser().getId())
                 .name(resume.getUser().getName())
@@ -43,7 +42,8 @@ public class ResumeController {
                 .career(resume.getCareer())
                 .links(resume.getLinks())
                 .selfIntro(resume.getSelfIntro())
-                .user(userDto) // 유저 정보 포함
+                .customSections(resume.getCustomSections()) // [추가]
+                .user(userDto)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -60,6 +60,7 @@ public class ResumeController {
                 request.getCareer(),
                 request.getLinks(),
                 request.getSelfIntro(),
+                request.getCustomSections(), // [추가]
                 false
         );
         return ResponseEntity.ok("이력서가 등록되었습니다.");
@@ -76,6 +77,7 @@ public class ResumeController {
                 request.getCareer(),
                 request.getLinks(),
                 request.getSelfIntro(),
+                request.getCustomSections(), // [추가]
                 false
         );
         return ResponseEntity.ok("이력서가 수정되었습니다.");
@@ -92,6 +94,7 @@ public class ResumeController {
         private String career;
         private String links;
         private String selfIntro;
+        private String customSections; // [추가]
     }
 
     @Data
@@ -104,7 +107,8 @@ public class ResumeController {
         private String career;
         private String links;
         private String selfIntro;
-        private UserDto user; // 프론트엔드에서 selectedResume.user.name 등으로 접근하므로 필요
+        private String customSections; // [추가]
+        private UserDto user;
     }
 
     @Data

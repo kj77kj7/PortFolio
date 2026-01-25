@@ -27,14 +27,13 @@ public class User {
 
     private boolean isForeigner;
 
-    @Column(nullable = false)
+    // [수정] 기업 회원은 이메일이 없을 수 있으므로 nullable = false 제거
     private String email;
 
     private String birthdate;
     private String career;
     private String jobGroup;
 
-    // [추가] 마이페이지 프로필 사진용
     @Column(columnDefinition = "LONGTEXT")
     private String profileImage;
 

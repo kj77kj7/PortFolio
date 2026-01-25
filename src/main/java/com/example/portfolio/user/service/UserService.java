@@ -19,25 +19,35 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 정규식 패턴 정의
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,15}$";
 
     public User register(RegisterRequest request) {
+        // 1. 아이디 중복 및 길이 검사 (공통)
         if (request.getUsername().length() < 6 || request.getUsername().length() > 15) {
             throw new RuntimeException("아이디는 6자 이상 15자 이하여야 합니다.");
         }
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("이미 사용 중인 아이디입니다.");
         }
+
+        // 2. 비밀번호 형식 검사 (공통)
         if (!Pattern.matches(PASSWORD_PATTERN, request.getPassword())) {
             throw new RuntimeException("비밀번호는 영문자와 특수문자를 반드시 포함하여 8~15자여야 합니다.");
         }
-        if (!Pattern.matches(EMAIL_PATTERN, request.getEmail())) {
-            throw new RuntimeException("올바른 이메일 형식이 아닙니다.");
+
+        // 3. [수정] 이메일 검사 (개인 회원인 경우에만 수행)
+        if (request.getRole() == Role.JOB_SEEKER) {
+            if (!Pattern.matches(EMAIL_PATTERN, request.getEmail())) {
+                throw new RuntimeException("올바른 이메일 형식이 아닙니다.");
+            }
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new RuntimeException("이미 사용 중인 이메일입니다.");
+            }
         }
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("이미 사용 중인 이메일입니다.");
-        }
+
+        // 4. 사업자 번호 중복 검사 (기업 회원인 경우에만 수행)
         if (request.getRole() == Role.COMPANY) {
             if (userRepository.findByBusinessNumber(request.getBusinessNumber()).isPresent()) {
                 throw new RuntimeException("이미 가입 되어있는 회사입니다.");
@@ -49,7 +59,7 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .isForeigner(request.isForeigner())
-                .email(request.getEmail())
+                .email(request.getEmail()) // 기업이면 null이 들어감
                 .birthdate(request.getBirthdate())
                 .career(request.getCareer())
                 .jobGroup(request.getJobGroup())
@@ -67,7 +77,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
     }
 
-    // [수정] 프로필 이미지도 업데이트하도록 파라미터 추가
     @Transactional
     public User updateCompanyInfo(Long userId, String tags, String intro, String profileImage) {
         User user = userRepository.findById(userId)
@@ -78,8 +87,8 @@ public class UserService {
         }
 
         user.setTags(tags);
-        user.setCareer(intro); // 기존 career 필드를 소개글로 사용
-        user.setProfileImage(profileImage); // [추가] 이미지 저장
+        user.setCareer(intro);
+        user.setProfileImage(profileImage);
 
         return userRepository.save(user);
     }

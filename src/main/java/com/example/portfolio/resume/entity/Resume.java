@@ -22,25 +22,29 @@ public class Resume {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // [추가] 프로필 사진 (Base64 문자열로 저장 - LONGTEXT)
+    // 프로필 사진
     @Column(columnDefinition = "LONGTEXT")
     private String profileImage;
 
-    // [추가] 직군 (여러 개 선택 가능하므로 콤마로 구분해서 저장하거나 JSON 문자열로 저장)
+    // 직군
     private String jobGroup;
 
-    // [추가] 총 경력 (신입, 1~3년 등 단일 선택)
+    // 총 경력
     private String career;
 
-    // [추가] 외부 링크 (여러 개일 수 있음, 텍스트로 저장)
+    // 외부 링크
     @Column(columnDefinition = "TEXT")
     private String links;
 
-    // [추가] 자기소개 (기존 content 필드를 자기소개로 사용해도 되지만 명확하게 분리)
+    // 자기소개
     @Column(columnDefinition = "TEXT")
     private String selfIntro;
 
-    private String title; // 이력서 제목 (자동 생성 또는 입력)
+    // [추가] 사용자 정의 섹션 (JSON 문자열로 저장)
+    @Column(columnDefinition = "LONGTEXT")
+    private String customSections;
+
+    private String title; // 이력서 제목
 
     private boolean isShared; // 커뮤니티 공개 여부
 

@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,17 +17,25 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
 
-    // 이력서 생성 + 유저 정보 동기화
-    @Transactional
-    public Resume createResume(Long userId, String title, String profileImage, String jobGroup, String career, String links, String selfIntro, boolean isShared) {
+    // 유저별 이력서 조회
+    public List<Resume> getResumesByUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저 없음"));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        return resumeRepository.findByUser(user);
+    }
 
-        // [핵심] 이력서에 입력한 사진과 정보를 유저 테이블에도 저장 (마이페이지 연동)
-        user.setProfileImage(profileImage);
-        user.setJobGroup(jobGroup);
-        user.setCareer(career);
-        userRepository.save(user);
+    // 상세 조회
+    public Resume getResume(Long resumeId) {
+        return resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new IllegalArgumentException("이력서를 찾을 수 없습니다."));
+    }
+
+    // 이력서 생성
+    @Transactional
+    public void createResume(Long userId, String title, String profileImage, String jobGroup,
+                             String career, String links, String selfIntro, String customSections, boolean isShared) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Resume resume = Resume.builder()
                 .user(user)
@@ -38,25 +45,19 @@ public class ResumeService {
                 .career(career)
                 .links(links)
                 .selfIntro(selfIntro)
+                .customSections(customSections) // [추가]
                 .isShared(isShared)
-                .createdAt(LocalDateTime.now().toString())
-                .updatedAt(LocalDateTime.now().toString())
                 .build();
-        return resumeRepository.save(resume);
+
+        resumeRepository.save(resume);
     }
 
-    // 이력서 수정 + 유저 정보 동기화
+    // 이력서 수정
     @Transactional
-    public Resume updateResume(Long resumeId, String title, String profileImage, String jobGroup, String career, String links, String selfIntro, boolean isShared) {
+    public void updateResume(Long resumeId, String title, String profileImage, String jobGroup,
+                             String career, String links, String selfIntro, String customSections, boolean isShared) {
         Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new RuntimeException("이력서 없음"));
-
-        // [핵심] 수정 시에도 유저 정보 업데이트
-        User user = resume.getUser();
-        user.setProfileImage(profileImage);
-        user.setJobGroup(jobGroup);
-        user.setCareer(career);
-        userRepository.save(user);
+                .orElseThrow(() -> new IllegalArgumentException("이력서를 찾을 수 없습니다."));
 
         resume.setTitle(title);
         resume.setProfileImage(profileImage);
@@ -64,25 +65,9 @@ public class ResumeService {
         resume.setCareer(career);
         resume.setLinks(links);
         resume.setSelfIntro(selfIntro);
+        resume.setCustomSections(customSections); // [추가]
         resume.setShared(isShared);
-        resume.setUpdatedAt(LocalDateTime.now().toString());
-        return resumeRepository.save(resume);
-    }
 
-    public void deleteResume(Long resumeId) {
-        resumeRepository.deleteById(resumeId);
-    }
-
-    public Resume getResume(Long resumeId) {
-        return resumeRepository.findById(resumeId).orElseThrow(() -> new RuntimeException("이력서 없음"));
-    }
-
-    public List<Resume> getResumesByUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저 없음"));
-        return resumeRepository.findByUser(user);
-    }
-
-    public List<Resume> getSharedResumes() {
-        return resumeRepository.findByIsSharedTrue();
+        resumeRepository.save(resume);
     }
 }

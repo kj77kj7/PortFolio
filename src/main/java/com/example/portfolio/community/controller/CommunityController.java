@@ -277,4 +277,18 @@ public class CommunityController {
         private String content;
         private String createdAt;
     }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        // 게시글 존재 여부 확인 후 삭제
+        CommunityPost post = communityPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        // 연관된 데이터(좋아요, 댓글)는 DB 설정(CASCADE)에 따라 다를 수 있으나,
+        // JPA 기본적인 삭제를 수행합니다.
+        communityPostRepository.delete(post);
+
+        return ResponseEntity.ok("게시글이 삭제되었습니다.");
+    }
 }

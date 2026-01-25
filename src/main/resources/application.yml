@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update      # create는 재시작마다 데이터가 날아갑니다. 유지하려면 update로 변경 권장
+      ddl-auto: create      # create는 재시작마다 데이터가 날아갑니다. 유지하려면 update로 변경 권장
     show-sql: true
     properties:
       hibernate:
