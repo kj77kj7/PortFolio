@@ -1,0 +1,160 @@
+/* CompanyMyPage.css - 유저 마이페이지(UserMyPage)와 디자인 통일 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.mypage-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 1. 상단 네비게이션바 */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; transition: color 0.2s; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+.login-box-btn.active { border-color: #397EFF; background-color: #f0f7ff; }
+
+/* 2. 메인 컨텐츠 영역 */
+.mp-content {
+    width: 100%;
+    max-width: 1000px; /* 유저 페이지와 동일한 너비 */
+    padding: 15px 20px 100px 20px; 
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* 돌아가기 링크 */
+.mp-back-link {
+    width: 100%; text-align: left; margin-bottom: 20px; cursor: pointer;
+    font-size: 14px; font-weight: 500; color: #666;
+}
+.mp-back-link:hover { color: #397EFF; text-decoration: underline; }
+
+/* 3. 타이틀 스타일 (유저 페이지 스타일 적용) */
+.mp-header-box {
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 30px; padding: 0 10px 15px 10px; position: relative; width: 100%;
+}
+.mp-header-box::after {
+    content: ""; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 3px; background-color: #D9D9D9;
+}
+.mp-title { font-weight: 700; font-size: 28px; color: #000000; margin: 0; }
+
+/* 4. 프로필 카드 디자인 (가로형) */
+.mp-profile-card {
+    width: 100%; background-color: #fff; border: 1px solid #eee;
+    border-radius: 12px; padding: 30px 40px; display: flex;
+    align-items: center; justify-content: flex-start; gap: 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); margin-bottom: 40px; box-sizing: border-box;
+}
+
+.mp-profile-left { display: flex; justify-content: center; align-items: center; }
+
+.mp-profile-img {
+    width: 100px; height: 100px; border-radius: 50%; /* 유저처럼 원형 적용 */
+    background-color: #e0e0e0; overflow: hidden; flex-shrink: 0;
+    background-size: cover; background-position: center; cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.mp-profile-info {
+    flex: 1; display: flex; flex-direction: column; gap: 12px; text-align: left;
+}
+
+.mp-info-row { display: flex; align-items: center; gap: 20px; font-size: 16px; }
+.mp-label { width: 80px; font-weight: 500; color: #777; flex-shrink: 0; }
+.mp-value { color: #333; font-weight: 500; }
+
+/* 버튼 스타일 */
+.mp-tag-add-btn {
+    padding: 8px 15px; background-color: #397EFF; color: white;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+    transition: background-color 0.2s; font-family: inherit; font-size: 15px;
+}
+.mp-tag-add-btn:hover { background-color: #2d65cc; }
+
+.mp-cancel-btn {
+    padding: 8px 15px; background-color: #eee; color: #333;
+    border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+}
+
+/* 5. 하단 2단 그리드 섹션 */
+.mp-grid-sections {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%;
+}
+
+.mp-section {
+    padding: 20px; border: 1px solid #eee; border-radius: 12px;
+    background-color: #fcfcfc; min-height: 300px; position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.mp-section-title {
+    font-weight: 700; font-size: 20px; color: #333;
+    border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; display: block;
+}
+
+/* 태그 스타일 (유저 뱃지와 통일) */
+.mp-badge {
+    background-color: #f0f4ff; color: #1967d2; padding: 4px 10px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+}
+
+/* 태그 입력창 스타일 */
+.tag-input-container {
+    border: 1px solid #ddd; border-radius: 8px; padding: 10px;
+    display: flex; flex-wrap: wrap; gap: 8px; background-color: white;
+}
+.tag-input-container:focus-within { border-color: #397EFF; }
+.tag-chip {
+    background-color: #e8f0fe; color: #1967d2; border-radius: 16px;
+    padding: 5px 12px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px;
+}
+.tag-remove-btn {
+    background: none; border: none; color: #1967d2; cursor: pointer; font-size: 16px;
+}
+.tag-input-field {
+    border: none; outline: none; font-size: 14px; flex: 1; min-width: 80px; font-family: inherit;
+}
+.suggestion-list {
+    background-color: white; border: 1px solid #ddd; border-top: none;
+    max-height: 150px; overflow-y: auto; list-style: none; padding: 0; margin: 0;
+}
+.suggestion-list li {
+    padding: 8px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f5f5f5;
+}
+.suggestion-list li:hover { background-color: #f0f4ff; }
+
+/* 리스트 아이템 (유저 페이지 스타일) */
+.ump-post-list { display: flex; flex-direction: column; gap: 8px; }
+.ump-post-row {
+    display: flex; justify-content: space-between; padding: 10px 5px;
+    border-bottom: 1px dashed #eee; cursor: pointer; transition: background-color 0.2s;
+}
+.ump-post-row:last-child { border-bottom: none; }
+.ump-post-row:hover { background-color: #f5f5f5; }
+
+.ump-post-title-text { font-size: 15px; color: #333; font-weight: 500; }
+.ump-post-date { font-size: 13px; color: #999; }
+.no-data-text { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }

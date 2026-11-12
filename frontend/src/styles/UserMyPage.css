@@ -1,0 +1,444 @@
+/* UserMyPage.css - 디자인 통합 (Blue Theme) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.mp-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 1. 상단바 (Navbar) */
+.navbar {
+    width: 100%; max-width: 1080px; height: 90px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background-color: white; border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+.nav-logo-img { height: 50px; width: auto; cursor: pointer; object-fit: contain; }
+.nav-links { display: flex; gap: 50px; }
+.nav-text-link {
+    background: transparent; border: none; font-weight: 700; font-size: 17px;
+    color: #000000; cursor: pointer; padding: 8px; transition: color 0.2s; font-family: 'Noto Sans KR', sans-serif;
+}
+.nav-text-link:hover, .nav-text-link.active { color: #397EFF; }
+
+/* 로그인/로그아웃 버튼 스타일 */
+.login-box-btn {
+    width: 130px; height: 40px; background: #FFFFFF; border: 1px solid #D9D9D9; border-radius: 6px;
+    display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 14px;
+    color: #397EFF; cursor: pointer; transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+.login-box-btn.active { border-color: #397EFF; background-color: #f0f7ff; }
+
+
+/* 2. 메인 컨텐츠 */
+.mp-content {
+    width: 100%;
+    max-width: 1000px;
+    padding: 15px 20px 100px 20px; 
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* 3. 돌아가기 버튼 */
+.mp-back-link, .back-link {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px; 
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+}
+.mp-back-link:hover, .back-link:hover { color: #397EFF; text-decoration: underline; }
+
+/* 4. 타이틀 스타일 */
+.mp-header-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px; 
+    padding: 0 10px 15px 10px;
+    position: relative;
+    width: 100%;
+}
+.mp-header-box::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background-color: #D9D9D9;
+}
+.mp-title, .ump-title {
+    font-weight: 700;
+    font-size: 28px;
+    color: #000000;
+    margin: 0;
+}
+
+/* 5. 프로필 카드 디자인 */
+.mp-profile-card, .ump-profile-section {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 30px 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 기존 center에서 변경 */
+    gap: 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    margin-bottom: 40px;
+    box-sizing: border-box;
+}
+
+.mp-profile-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mp-profile-img, .ump-avatar {
+    width: 100px; 
+    height: 100px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.mp-profile-img img, .ump-avatar img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+.mp-profile-info, .ump-user-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left; /* 기존 center에서 변경 */
+}
+.ump-user-info h2 { font-size: 24px; font-weight: bold; margin: 0; }
+.ump-user-info p { margin: 0; font-size: 16px; color: #555; }
+
+.mp-info-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 16px;
+}
+
+.mp-label {
+    width: 80px;
+    font-weight: 500; 
+    color: #777;
+    flex-shrink: 0;
+}
+
+.mp-value {
+    color: #333;
+    font-weight: 500;
+}
+
+/* 뱃지 스타일 통일 */
+.mp-badge {
+    background-color: #f0f4ff; 
+    color: #1967d2; 
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 10px;
+}
+
+/* --- [보존 기능 1] 이력서 배너 (Resume Banner) - Blue Theme 적용 --- */
+.ump-resume-banner {
+    display: flex;
+    align-items: center;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.ump-resume-banner:hover {
+    background-color: #f0f7ff; /* Blue hover */
+    border-color: #397EFF;
+}
+
+.icon-circle {
+    width: 50px; height: 50px;
+    background-color: #397EFF; /* Green(#ccc) -> Blue */
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; color: white;
+    margin-right: 20px;
+}
+
+.banner-text h3 { font-size: 18px; margin-bottom: 5px; font-weight: 700; color: #333; }
+.banner-text p { font-size: 14px; color: #666; }
+
+.arrow-icon {
+    margin-left: auto;
+    font-size: 24px;
+    color: #397EFF; /* Arrow Color Blue */
+}
+
+/* 6. 2단 그리드 섹션 */
+.mp-grid-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    width: 100%;
+}
+
+.mp-section, .ump-section {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background-color: #fcfcfc;
+    min-height: 300px;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    margin-bottom: 0; /* 그리드 내부라 margin 제거 */
+}
+
+.mp-section-title, .section-label {
+    font-weight: 700;
+    font-size: 20px;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* 7. 태그 추가 / 이력서 버튼 */
+.mp-tag-add-btn {
+    padding: 8px 15px;
+    background-color: #397EFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+    font-size: 15px;
+}
+.mp-tag-add-btn:hover {
+    background-color: #2d65cc;
+}
+
+/* 8. 지원 내역 리스트 (New Style) */
+.ump-application-list, .ump-app-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ump-app-row, .ump-app-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.ump-app-row:hover, .ump-app-card:hover { 
+    background-color: #f7f7f7; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 구버전 호환용 이미지 박스 스타일 */
+.ump-card-img {
+    width: 60px; height: 60px; margin-right: 15px; border-radius: 4px; overflow: hidden;
+}
+.ump-card-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.ump-app-info, .ump-card-info {
+    display: flex;
+    flex-direction: column; /* 기존 로직 호환 */
+    gap: 4px;
+    flex: 1;
+    overflow: hidden;
+}
+.ump-app-job-title, .ump-card-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+.ump-app-company-name, .company-name {
+    font-size: 13px;
+    color: #666;
+    font-weight: 400;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.ump-app-actions, .ump-card-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 80px;
+}
+
+/* 지원 철회 버튼 */
+.ump-withdraw-btn, .withdraw-btn {
+    padding: 4px 8px;
+    background-color: #fff;
+    border: 1px solid #d32f2f; /* Red border */
+    color: #d32f2f;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.ump-withdraw-btn:hover, .withdraw-btn:hover {
+    background-color: #d32f2f;
+    color: white;
+}
+
+/* 상태 뱃지 (기존 기능 유지 + 디자인 통합) */
+.ump-app-status, .status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 50px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+.status-applied, .status-badge.pending { 
+    background-color: #e8f0fe; color: #1967d2; border-color: #e8f0fe;
+}
+.status-pass, .status-badge.passed { 
+    background-color: #e6ffe6; color: #388e3c; border-color: #e6ffe6;
+}
+.status-fail, .status-badge.failed { 
+    background-color: #ffe6e6; color: #d32f2f; border-color: #ffe6e6;
+}
+
+
+/* 9. 작성 글 리스트 스타일 */
+.ump-post-list-wrapper {
+    /* Wrapper Style */
+}
+.ump-post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: none; /* 기존 border 제거 */
+}
+
+.ump-post-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px dashed #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.ump-post-row:last-child { border-bottom: none; }
+.ump-post-row:hover { background-color: #f5f5f5; }
+
+.ump-post-title-text {
+    flex: 1;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+.ump-post-date {
+    font-size: 13px;
+    color: #999;
+    flex-shrink: 0;
+    margin-left: 10px;
+    width: auto;
+}
+
+/* 데이터 없음 & 더보기 버튼 */
+.no-data-msg, .no-data-box {
+    text-align: center;
+    padding: 40px 0;
+    color: #999;
+    font-size: 14px;
+}
+
+.section-more-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    font-size: 13px;
+    color: #397EFF;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.section-more-btn:hover {
+    opacity: 0.8;
+}
+
+/* --- [보존 기능 2] 페이지네이션 (Pagination) - Blue Theme 적용 --- */
+.ump-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.ump-page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+.ump-page-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    background-color: #f5f5f5;
+}
+.ump-page-btn:hover:not(:disabled) {
+    background-color: #f0f7ff;
+    border-color: #397EFF;
+    color: #397EFF;
+}
+
+.ump-page-info {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}

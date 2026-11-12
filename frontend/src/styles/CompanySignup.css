@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+/* 전체 배경 (회색톤 통일) */
+.cs-container {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #f0f2f5; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* [디자인 적용] 돌아가기 버튼 왼쪽 상단 고정 */
+.cs-header-left {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+}
+
+.cs-back-link {
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    font-weight: 500;
+}
+.cs-back-link:hover {
+    color: #397EFF;
+    text-decoration: underline;
+}
+
+/* [디자인 적용] 중앙 카드 스타일 */
+.cs-card {
+    background-color: white;
+    width: 100%;
+    max-width: 550px; 
+    padding: 50px 60px;
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+}
+
+.cs-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+/* 폼 스타일 */
+.cs-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.cs-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cs-group label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #444;
+}
+
+/* [디자인 적용] 입력창 스타일 (높이 48px) */
+.cs-input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-size: 16px;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+
+.cs-input:focus {
+    outline: none;
+    border-color: #397EFF;
+    box-shadow: 0 0 0 3px rgba(57, 126, 255, 0.1);
+}
+
+/* 에러 상태 */
+.input-error {
+    border-color: #d32f2f;
+    background-color: #fff8f8;
+}
+
+/* 유효성 메시지 */
+.cs-msg {
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+}
+.cs-msg.success { color: #2E7D32; }
+.cs-msg.error { color: #d32f2f; font-weight: 500; }
+
+/* 주소 검색 영역 */
+.address-row {
+    display: flex;
+    gap: 10px;
+}
+
+.zipcode-input {
+    flex: 1; 
+}
+
+/* 주소 검색 버튼 */
+.addr-search-btn {
+    width: 100px;
+    height: 48px; /* 입력창 높이와 통일 */
+    background-color: #f0f7ff; 
+    border: 1px solid #397EFF;
+    border-radius: 8px;
+    color: #397EFF;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.addr-search-btn:hover {
+    background-color: #397EFF;
+    color: white;
+}
+
+.mt-2 { margin-top: 10px; }
+
+/* 제출 버튼 영역 */
+.cs-submit-area {
+    margin-top: 30px;
+}
+
+.cs-submit-btn {
+    width: 100%;
+    height: 55px;
+    background-color: #397EFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.cs-submit-btn:hover {
+    background-color: #2d65cc;
+}

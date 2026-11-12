@@ -1,0 +1,379 @@
+/* CompanyList.css - v1 디자인 적용 + 팝업 기능 유지 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.cl-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Noto Sans KR', sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* 팝업 위치 기준 */
+}
+
+/* 1. 헤더 (공통 규격: 1080px, 90px) */
+.navbar {
+    width: 100%;
+    max-width: 1080px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background-color: white;
+    border-bottom: 1px solid #D9D9D9;
+    box-sizing: border-box;
+}
+
+.nav-logo-img {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    gap: 50px;
+}
+
+.nav-text-link {
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    font-size: 17px;
+    color: #000000;
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.nav-text-link:hover,
+.nav-text-link.active {
+    color: #397EFF;
+}
+
+.login-box-btn {
+    width: 130px;
+    height: 40px;
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #397EFF;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.login-box-btn:hover {
+    background-color: #f9f9f9;
+    border-color: #397EFF;
+}
+
+/* 2. 메인 컨텐츠 (중앙 정렬 1000px) */
+.cl-content {
+    width: 100%;
+    max-width: 1000px;
+    padding: 40px 20px 100px 20px; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. 타이틀 영역 */
+.cl-header-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 10px;
+    padding-bottom: 15px;
+    position: relative;
+    width: 100%;
+}
+
+.cl-header-box::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 3px;
+    background-color: #D9D9D9;
+}
+
+.cl-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #000000;
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 4. 검색창 (Tag Box 스타일) */
+.cl-search-container {
+    width: 600px;
+    height: 60px;
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    margin: 30px auto 60px auto;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.cl-search-container:focus-within {
+    border-color: #397EFF;
+}
+
+.cl-tag-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    justify-content: center; /* 태그 중앙 정렬 */
+}
+
+.cl-tag-box::-webkit-scrollbar {
+    display: none;
+}
+
+.cl-search-chip {
+    background-color: #e8f0fe;
+    color: #1967d2;
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cl-search-chip button {
+    border: none;
+    background: none;
+    color: #1967d2;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+.cl-search-chip button:hover { color: #d32f2f; }
+
+/* 입력창 스타일 */
+.cl-tag-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-weight: 400 !important;
+    background: transparent;
+    min-width: 100px;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.cl-tag-input::placeholder {
+    text-align: center;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400 !important;
+    color: #999 !important;
+}
+
+.cl-tag-input:focus::placeholder {
+    color: transparent;
+}
+
+.cl-search-btn {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+}
+
+.search-icon-img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+/* 검색 결과 없음 */
+.no-result-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 0;
+    color: #999;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 5. 리스트 & 그리드 */
+.cl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    min-height: 400px;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.cl-card {
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cl-card:hover {
+    transform: translateY(-5px);
+}
+
+.cl-card-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background-color: #D9D9D9;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    object-fit: cover;
+}
+
+.cl-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.cl-card-name {
+    font-family: 'Noto Sans KR', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #2C2C2C;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
+}
+
+.cl-card-addr {
+    font-family: 'Noto Sans KR', sans-serif !important;
+    font-size: 14px !important;
+    color: #333;
+    margin: 0;
+    line-height: 1.4; 
+    word-break: keep-all;
+}
+
+.cl-footer {
+    color: #999;
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+/* --- [기능 유지] 팝업 (Overlay) 스타일 --- */
+/* v1 디자인에는 없었으나 기능 구현을 위해 기존 파일에서 가져옴 */
+
+.cl-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 마우스 이벤트가 뒤쪽으로 통과되지 않게 하려면 auto로 변경 고려 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경 어둡게 처리 추가 */
+    pointer-events: auto; /* 팝업 활성화 시 클릭 방지 */
+}
+
+.cl-popup-box {
+    width: 450px; /* v1 스타일에 맞춰 살짝 키움 */
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 팝업 닫기 버튼용 스타일 제안 (필요 시 사용) */
+.cl-popup-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #999;
+}
+
+.cl-popup-img {
+    width: 100%;
+    height: 220px;
+    background-color: #d9d9d9;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.cl-popup-name { 
+    font-size: 24px; 
+    font-weight: bold; 
+    margin-bottom: 10px; 
+    color: #333;
+}
+
+.cl-popup-addr { 
+    font-size: 16px; 
+    color: #666; 
+    margin-bottom: 20px; 
+}
+
+.cl-popup-tags { 
+    color: #397EFF; /* 포인트 컬러 통일 */
+    font-weight: bold; 
+    margin-bottom: 20px; 
+    word-break: break-all; 
+}
+
+.cl-popup-intro {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-line;
+    text-align: left;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}

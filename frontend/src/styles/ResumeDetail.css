@@ -1,0 +1,166 @@
+/* 프로필 이미지 컨테이너 */
+.rc-profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가운데 정렬 */
+    margin-bottom: 30px;
+    flex-shrink: 0; /* 공간이 부족해도 찌그러지지 않도록 설정 */
+}
+
+/* 프로필 이미지 원형 박스 */
+.rc-profile-circle {
+    width: 120px;          /* 원하는 크기로 고정 (예: 120px) */
+    height: 120px;         /* 너비와 동일하게 설정하여 정원 유지 */
+    border-radius: 50%;    /* 완전한 원형 */
+    
+    background-color: #f0f0f0;
+    background-size: cover; /* 이미지가 박스를 꽉 채우되 비율 유지 */
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    border: 1px solid #ddd;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    margin-bottom: 15px;   /* 이메일과의 간격 */
+    overflow: hidden;      /* 이미지가 넘치면 잘라냄 */
+}
+
+/* 이메일 텍스트 스타일 */
+.rc-photo-msg {
+    color: #333;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+}
+/* 읽기 전용 박스 스타일 (스크롤 기능 핵심) */
+.read-only-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    
+    /* 핵심: 내용이 이 높이를 넘으면 스크롤 생성 */
+    max-height: 300px; 
+    overflow-y: auto; 
+    
+    /* 텍스트 줄바꿈 처리 */
+    white-space: pre-wrap; 
+    line-height: 1.6;
+    color: #333;
+}
+
+/* HTML 에디터 내용(Quill 등)이 들어갈 때 스타일 */
+.read-only-html {
+    background-color: #fff; /* 에디터 내용은 흰 배경 */
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    
+    /* 핵심: 내용이 이 높이를 넘으면 스크롤 생성 */
+    max-height: 400px; 
+    overflow-y: auto;
+}
+
+/* 스크롤바 디자인 (선택 사항) */
+.read-only-box::-webkit-scrollbar,
+.read-only-html::-webkit-scrollbar {
+    width: 8px;
+}
+.read-only-box::-webkit-scrollbar-thumb,
+.read-only-html::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+/* 전체 컨테이너: 탭 안에 들어가도 꽉 차게 설정 */
+.resume-detail-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%; /* 부모(탭) 높이에 맞춤 */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* 전체 페이지 스크롤 방지 (필요시 auto로 변경 가능) */
+    background-color: #fff;
+}
+
+/* 상단 프로필 영역 */
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-email {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 각 섹션 (희망 직군, 경력 등) 공통 스타일 */
+.section-wrapper {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 읽기 전용 박스 스타일 (input/textarea 대신 사용) */
+.read-only-box {
+    background-color: #f8f9fa; /* 입력창과 유사한 회색 배경 */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.6;
+    
+    /* 핵심: 내용이 길어지면 박스 안에서 스크롤 생성 */
+    max-height: 200px; /* 적절한 높이로 설정 (필요에 따라 조절) */
+    overflow-y: auto;  /* 세로 스크롤 허용 */
+    white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+/* 스크롤바 커스텀 (선택사항 - 더 깔끔하게) */
+.read-only-box::-webkit-scrollbar {
+    width: 8px;
+}
+.read-only-box::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+/* 희망 직군 태그 스타일 */
+.job-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.job-tag {
+    background-color: #e7f1ff;
+    color: #007bff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* 링크 스타일 */
+.link-text {
+    color: #007bff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.link-text:hover {
+    text-decoration: underline;
+}

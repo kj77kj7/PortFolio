@@ -1,0 +1,204 @@
+/* Home.css - v1 디자인 적용 (중앙 정렬 및 UI 개선) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.home-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: rgb(255, 255, 255);
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- 네비게이션 바 (공통 규격: 1080px, 90px) --- */
+.navbar {
+    width: 100%;
+    max-width: 1080px; 
+    height: 90px;      
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    background-color: rgb(255, 255, 255);
+    border-bottom: 1px solid #D9D9D9; 
+    box-sizing: border-box;
+}
+
+.nav-logo-img {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    gap: 50px; 
+}
+
+.nav-text-link {
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    font-size: 17px;
+    color: #000000;
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.2s;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.nav-text-link:hover { color: #397EFF; }
+
+/* 로그인 버튼 */
+.login-box-btn {
+    width: 130px; 
+    height: 40px; 
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px; 
+    color: #397EFF; 
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.login-box-btn:hover { background-color: #f9f9f9; border-color: #397EFF; }
+
+
+/* --- 메인 컨텐츠 영역 --- */
+.main-content {
+    width: 100%;
+    max-width: 1000px; /* 컨텐츠 중앙 정렬 */
+    padding: 40px 0 80px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- 검색 배너 --- */
+.search-banner {
+    width: 600px; 
+    height: 60px; 
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    margin: 30px auto 60px auto; 
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px; 
+    font-weight: 500;
+    text-align: center;
+    background: transparent;
+}
+.search-input:focus::placeholder { color: transparent; }
+
+.search-btn {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+}
+.search-icon-img { width: 22px; height: 22px; object-fit: contain; }
+
+/* --- 섹션 공통 스타일 --- */
+.content-section { margin-bottom: 60px; width: 100%; }
+
+.section-header-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #000000;
+    margin: 0;
+}
+
+.goto-icon-btn { padding: 5px; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; }
+.goto-icon-img { width: 20px; height: 20px; object-fit: contain; } 
+
+.section-subtitle {
+    font-weight: 400;
+    font-size: 14px; 
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* --- 캐러셀 및 카드 그리드 --- */
+.carousel-wrapper { position: relative; width: 100%; }
+/* 캐러셀 화살표는 디자인상 숨김 처리 (기능 필요시 display:flex로 변경) */
+.carousel-arrow { display: none !important; } 
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; 
+    width: 100%;
+}
+
+.job-card, .company-card { width: 100%; cursor: pointer; transition: transform 0.2s; }
+.job-card:hover, .company-card:hover { transform: translateY(-5px); }
+
+.gray-panel {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: #D9D9D9;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.job-info h3 {
+    font-weight: 700;
+    font-size: 16px; 
+    margin-bottom: 4px;
+    color: #2C2C2C;
+}
+.job-date { font-size: 12px; color: #666; margin-bottom: 4px; }
+.job-company { font-size: 14px; margin-bottom: 2px; color: #2C2C2C; }
+.job-addr { font-size: 12px; color: #888; }
+
+/* --- 커뮤니티 리스트 --- */
+.community-layout { width: 100%; display: flex; justify-content: center; }
+.community-list-box {
+    width: 100%; 
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    border-radius: 7px;
+    padding: 25px 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.community-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+.community-item:last-child { border-bottom: none; padding-bottom: 0; }
+.post-index { font-weight: 700; font-size: 16px; color: #333; }
+.post-title { font-weight: 300; font-size: 16px; color: #333; }
